@@ -22,6 +22,7 @@ namespace Reactivities.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddCors(opt => opt.AddPolicy ("CorsPolicy", policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins ("http://localhost:3000")));
             services.AddControllers();
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Reactivities.Api", Version = "v1" }));
         }
@@ -41,6 +42,8 @@ namespace Reactivities.Api
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {
