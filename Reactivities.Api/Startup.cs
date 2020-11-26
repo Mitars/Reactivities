@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Reactivities.Application.Activities;
 using Reactivities.Persistence;
 
 namespace Reactivities.Api
@@ -23,8 +25,12 @@ namespace Reactivities.Api
         {
             services.AddDbContext<DataContext>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddCors(opt => opt.AddPolicy ("CorsPolicy", policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins ("http://localhost:3000")));
+            services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddControllers();
-            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Reactivities.Api", Version = "v1" }));
+            services.AddSwaggerGen(c => {
+                c.CustomSchemaIds(x => x.FullName);
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Reactivities.Api", Version = "v1", });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

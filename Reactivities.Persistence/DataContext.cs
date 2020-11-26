@@ -11,12 +11,14 @@ namespace Reactivities.Persistence
         {
             try {
                 this.Database.Migrate();
+                Seed.SeedData(this);
             } catch (Exception ex) {
                 logger.LogError(ex, "An error occurred during migration");
             }
         }
 
         public DbSet<Value> Values { get; set; }
+        public DbSet<Activity> Activities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
