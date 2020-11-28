@@ -1,9 +1,9 @@
-import React from "react";
-import { Grid } from "semantic-ui-react";
-import { Activity } from "../../../app/models/activity";
-import { ActivityList } from "./ActivityList";
-import { ActivityDetails } from "../details/ActivityDetails";
-import { ActivityForm } from "../form/ActivityForm";
+import React, { SyntheticEvent } from 'react';
+import { Grid } from 'semantic-ui-react';
+import { Activity } from '../../../app/models/activity';
+import { ActivityList } from './ActivityList';
+import { ActivityDetails } from '../details/ActivityDetails';
+import { ActivityForm } from '../form/ActivityForm';
 
 interface IProps {
   activities: Activity[];
@@ -14,7 +14,12 @@ interface IProps {
   setSelectedActivity: (activity: Activity | null) => void;
   createActivity: (activity: Activity) => void;
   editActivity: (activity: Activity) => void;
-  deleteActivity: (id: string) => void;
+  deleteActivity: (
+    event: SyntheticEvent<HTMLButtonElement>,
+    id: string
+  ) => void;
+  submitting: boolean;
+  target: string;
 }
 
 export const ActivityDashboard = ({
@@ -27,6 +32,8 @@ export const ActivityDashboard = ({
   createActivity,
   editActivity,
   deleteActivity,
+  submitting,
+  target,
 }: IProps) => {
   return (
     <Grid>
@@ -35,6 +42,8 @@ export const ActivityDashboard = ({
           activities={activities}
           selectActivity={selectActivity}
           deleteActivity={deleteActivity}
+          submitting={submitting}
+          target={target}
         />
       </Grid.Column>
       <Grid.Column width={6}>
@@ -52,6 +61,7 @@ export const ActivityDashboard = ({
             setEditMode={setEditMode}
             createActivity={createActivity}
             editActivity={editActivity}
+            submitting={submitting}
           />
         )}
       </Grid.Column>

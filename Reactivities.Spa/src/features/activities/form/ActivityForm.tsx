@@ -1,13 +1,14 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
-import { Button, Form, Segment } from "semantic-ui-react";
-import { Activity } from "../../../app/models/activity";
-import { v4 as uuid } from "uuid";
+import React, { FormEvent, useState } from 'react';
+import { Button, Form, Segment } from 'semantic-ui-react';
+import { Activity } from '../../../app/models/activity';
+import { v4 as uuid } from 'uuid';
 
 interface IProp {
   activity: Activity | null;
   setEditMode: (editMode: boolean) => void;
   createActivity: (activity: Activity) => void;
   editActivity: (activity: Activity) => void;
+  submitting: boolean;
 }
 
 export const ActivityForm = ({
@@ -15,19 +16,20 @@ export const ActivityForm = ({
   setEditMode,
   createActivity,
   editActivity,
+  submitting,
 }: IProp) => {
   const initializeForm = () => {
     if (initialFormState) {
       return initialFormState;
     } else {
       return {
-        id: "",
-        title: "",
-        category: "",
-        description: "",
-        date: "",
-        city: "",
-        venue: "",
+        id: '',
+        title: '',
+        category: '',
+        description: '',
+        date: '',
+        city: '',
+        venue: '',
       };
     }
   };
@@ -94,7 +96,13 @@ export const ActivityForm = ({
           placeholder="Venue"
           value={activity.venue}
         />
-        <Button positive float="right" type="submit" content="Submit"></Button>
+        <Button
+          loading={submitting}
+          positive
+          float="right"
+          type="submit"
+          content="Submit"
+        ></Button>
         <Button
           onClick={() => setEditMode(false)}
           float="right"
