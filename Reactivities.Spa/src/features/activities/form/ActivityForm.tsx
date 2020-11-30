@@ -1,39 +1,52 @@
-import React, { FormEvent, useContext, useState } from 'react';
+import React, { FormEvent, useContext, useEffect, useState } from 'react';
 import { Button, Form, Segment } from 'semantic-ui-react';
 import { Activity } from '../../../app/models/activity';
 import { v4 as uuid } from 'uuid';
 import { observer } from 'mobx-react-lite';
 import ActivityStore from '../../../app/stores/activityStore';
+import { RouteComponentProps } from 'react-router-dom';
 
-interface IProp {
-  activity: Activity | undefined;
-}
-
-const ActivityForm = ({ activity: initialFormState }: IProp) => {
-  const initializeForm = () => {
-    if (initialFormState) {
-      return initialFormState;
-    } else {
-      return {
-        id: '',
-        title: '',
-        category: '',
-        description: '',
-        date: '',
-        city: '',
-        venue: '',
-      };
-    }
-  };
+const ActivityForm = ({
+  match,
+  history,
+}: RouteComponentProps<{ id: string }>) => {
   const activityStore = useContext(ActivityStore);
   const {
     createActivity,
     editActivity,
-    cancelFormOpen,
     submitting,
+    activity: initialFormState,
+    loadActivity,
+    clearActivity,
   } = activityStore;
 
-  const [activity, setActivity] = useState<Activity>(initializeForm);
+  const [activity, setActivity] = useState<Activity>({
+    id: '',
+    title: '',
+    category: '',
+    description: '',
+    date: '',
+    city: '',
+    venue: '',
+  });
+
+  useEffect(() => {
+    if (match.params.id && activity.id.length === 0) {
+      loadActivity(match.params.id).then(
+        () => initialFormState && setActivity(initialFormState)
+      );
+    }
+
+    return () => {
+      clearActivity();
+    };
+  }, [
+    loadActivity,
+    clearActivity,
+    match.params.id,
+    initialFormState,
+    activity.id.length,
+  ]);
 
   const handleSubmit = () => {
     if (activity.id.length === 0) {
@@ -41,9 +54,13 @@ const ActivityForm = ({ activity: initialFormState }: IProp) => {
         ...activity,
         id: uuid(),
       };
-      createActivity(newActivity);
+      createActivity(newActivity).then(() =>
+        history.push(`/activities/${newActivity.id}`)
+      );
     } else {
-      editActivity(activity);
+      editActivity(activity).then(() =>
+        history.push(`/activities/${activity.id}`)
+      );
     }
   };
 
@@ -103,7 +120,7 @@ const ActivityForm = ({ activity: initialFormState }: IProp) => {
           content="Submit"
         ></Button>
         <Button
-          onClick={cancelFormOpen}
+          onClick={() => history.push('/activities')}
           float="right"
           type="submit"
           content="Cancel"

@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
-import React, { SyntheticEvent, useContext } from 'react';
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Item, Label, Segment } from 'semantic-ui-react';
 import { Activity } from '../../../app/models/activity';
 import ActivityStore from '../../../app/stores/activityStore';
@@ -8,10 +9,9 @@ const ActivityList = () => {
   const activityStore = useContext(ActivityStore);
   const {
     activitiesByDate,
-    selectActivity,
     deleteActivity,
-    target,
     submitting,
+    target,
   } = activityStore;
 
   return (
@@ -30,7 +30,8 @@ const ActivityList = () => {
               </Item.Description>
               <Item.Extra>
                 <Button
-                  onClick={() => selectActivity(activity.id)}
+                  as={Link}
+                  to={`/activities/${activity.id}`}
                   floated="right"
                   content="View"
                   color="blue"
