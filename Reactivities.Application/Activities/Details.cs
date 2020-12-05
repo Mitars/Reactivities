@@ -1,7 +1,9 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Reactivities.Application.Errors;
 using Reactivities.Domain;
 using Reactivities.Persistence;
 
@@ -23,8 +25,17 @@ namespace Reactivities.Application.Activities
                 this.context = context;
             }
 
-            public async Task<Activity> Handle(Query request, CancellationToken cancellationToken) =>
-                await this.context.Activities.FindAsync(request.Id);
+            public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
+            {
+                var activity = await this.context.Activities.FindAsync(request.Id);
+
+                if (activity == null)
+                {
+                    throw new RestException(HttpStatusCode.NotFound, new { activity = "Not found" });
+                }
+
+                return activity;
+            }
         }
     }
 }

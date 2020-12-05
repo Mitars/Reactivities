@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using MediatR;
 using Reactivities.Domain;
 using Reactivities.Persistence;
@@ -20,11 +21,24 @@ namespace Reactivities.Application.Activities
             public string Venue { get; init; }
         }
 
-        public record Handler : IRequestHandler<Command>
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Title).NotEmpty();
+                RuleFor(x => x.Description).NotEmpty();
+                RuleFor(x => x.Category).NotEmpty();
+                RuleFor(x => x.Date).NotEmpty();
+                RuleFor(x => x.City).NotEmpty();
+            }
+        }
+
+        public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext context;
 
-            public Handler(DataContext context) {
+            public Handler(DataContext context)
+            {
                 this.context = context;
             }
 
