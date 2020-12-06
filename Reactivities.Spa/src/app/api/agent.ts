@@ -12,7 +12,7 @@ axios.interceptors.response.use(
       toast.error('Network error - make sure API is running!');
     }
 
-    console.log(error);
+    console.error(error);
     const { status, data, config } = error.response;
     if (status === 404) {
       history.push('/notfound');
@@ -29,6 +29,8 @@ axios.interceptors.response.use(
     if (status === 500) {
       toast.error('Server error - check the terminal for more info!');
     }
+
+    throw error;
   }
 );
 

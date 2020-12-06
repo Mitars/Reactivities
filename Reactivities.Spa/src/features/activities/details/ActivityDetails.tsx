@@ -15,10 +15,10 @@ const ActivityDetails = ({ match }: RouteComponentProps<{ id: string }>) => {
 
   useEffect(() => {
     loadActivity(match.params.id);
-  }, [loadActivity]);
+  }, [loadActivity, match.params.id]);
 
   if (loadingInitial || !activity)
-    return <LoadingComponent content="Loading Activity..." />;
+    return <LoadingComponent content='Loading Activity...' />;
 
   return (
     <Grid>
