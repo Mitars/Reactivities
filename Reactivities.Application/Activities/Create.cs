@@ -25,11 +25,11 @@ namespace Reactivities.Application.Activities
         {
             public CommandValidator()
             {
-                RuleFor(x => x.Title).NotEmpty();
-                RuleFor(x => x.Description).NotEmpty();
-                RuleFor(x => x.Category).NotEmpty();
-                RuleFor(x => x.Date).NotEmpty();
-                RuleFor(x => x.City).NotEmpty();
+                RuleFor(c => c.Title).NotEmpty();
+                RuleFor(c => c.Description).NotEmpty();
+                RuleFor(c => c.Category).NotEmpty();
+                RuleFor(c => c.Date).NotEmpty();
+                RuleFor(c => c.City).NotEmpty();
             }
         }
 

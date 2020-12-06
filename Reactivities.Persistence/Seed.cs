@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 using Reactivities.Domain;
 
 namespace Reactivities.Persistence
@@ -9,6 +10,41 @@ namespace Reactivities.Persistence
     {
         public static void SeedData(DataContext context)
         {
+            if (!context.Users.Any())
+            {
+                var users = new List<AppUser>
+                {
+                    new AppUser
+                    {
+                        DisplayName = "Bob",
+                        UserName = "bob",
+                        Email = "bob@test.com"
+                    },
+                    new AppUser
+                    {
+                        DisplayName = "Tom",
+                        UserName = "tom",
+                        Email = "tom@test.com"
+                    },
+                    new AppUser
+                    {
+                        DisplayName = "Jane",
+                        UserName = "jane",
+                        Email = "jane@test.com"
+                    },
+                };
+
+                var hasher = new PasswordHasher<AppUser>();
+                foreach (var user in users)
+                {
+                    user.PasswordHash = hasher.HashPassword(null, "password");
+                    user.NormalizedUserName = user.UserName.ToUpper();
+                    user.NormalizedEmail = user.Email.ToUpper();
+
+                    context.Users.Add(user);
+                }
+            }
+
             if (!context.Activities.Any())
             {
                 var activities = new List<Activity> {

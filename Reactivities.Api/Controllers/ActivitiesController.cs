@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Reactivities.Application.Activities;
 using Reactivities.Domain;
@@ -9,36 +10,30 @@ using System.Threading.Tasks;
 
 namespace Reactivities.Api.Controllers
 {
-    [Route ("api/[controller]")]
-    [ApiController]
-    public class ActivitiesController : ControllerBase
+    public class ActivitiesController : MediatorControllerBase
     {
-        private readonly IMediator mediator;
-        public ActivitiesController(IMediator mediator) {
-            this.mediator = mediator;
-        }
-
         [HttpGet]
         public async Task<ActionResult<List<Activity>>> List(CancellationToken ct) =>
-            await this.mediator.Send(new List.Query());
+            await this.Mediator.Send(new List.Query());
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Activity>> Details(Guid id) =>
-            await this.mediator.Send(new Details.Query { Id = id });
+            await this.Mediator.Send(new Details.Query { Id = id });
 
         [HttpPost]
         public async Task<ActionResult<Unit>> Create(Create.Command command) =>
-            await this.mediator.Send(command);
-        
+            await this.Mediator.Send(command);
+
         [HttpPut("{id}")]
         public async Task<ActionResult<Unit>> Edit(Guid id, Edit.Command command)
         {
             command.Id = id;
-            return await this.mediator.Send(command);
+            return await this.Mediator.Send(command);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<Unit>> Delete(Guid id) =>
-            await this.mediator.Send(new Delete.Command { Id = id });
+            await this.Mediator.Send(new Delete.Command { Id = id });
     }
 }
