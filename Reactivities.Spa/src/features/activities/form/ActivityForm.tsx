@@ -3,7 +3,6 @@ import { Button, Form, Grid, Segment } from 'semantic-ui-react';
 import { Activity, ActivityFormValues } from '../../../app/models/activity';
 import { v4 as uuid } from 'uuid';
 import { observer } from 'mobx-react-lite';
-import ActivityStore from '../../../app/stores/activityStore';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Form as FinalForm, Field } from 'react-final-form';
 import { TextInput } from '../../../app/common/form/TextInput';
@@ -12,14 +11,22 @@ import { SelectInput } from '../../../app/common/form/SelectInput';
 import { DateInput } from '../../../app/common/form/DateInput';
 import { category } from '../../../app/common/options/categoryOptions';
 import { combineDateAndTime } from '../../../app/common/util/util';
-import { combineValidators, composeValidators, hasLengthGreaterThan, isRequired } from 'revalidate';
+import {
+  combineValidators,
+  composeValidators,
+  hasLengthGreaterThan,
+  isRequired,
+} from 'revalidate';
+import { RootStoreContext } from '../../../app/stores/rootStore';
 
 const validate = combineValidators({
-  title: isRequired({message: 'The event title is required'}),
+  title: isRequired({ message: 'The event title is required' }),
   category: isRequired('Category'),
   description: composeValidators(
     isRequired('Description'),
-    hasLengthGreaterThan(4)({message: 'Description needs to be at least 5 characters'})
+    hasLengthGreaterThan(4)({
+      message: 'Description needs to be at least 5 characters',
+    })
   )(),
   city: isRequired('City'),
   venue: isRequired('Venue'),
@@ -27,38 +34,34 @@ const validate = combineValidators({
   time: isRequired('Time'),
 });
 
-const ActivityForm = ({
-  match
-}: RouteComponentProps<{ id: string }>) => {
-  const activityStore = useContext(ActivityStore);
+const ActivityForm = ({ match }: RouteComponentProps<{ id: string }>) => {
+  const rootStore = useContext(RootStoreContext);
   const {
     createActivity,
     editActivity,
     submitting,
     loadActivity,
-  } = activityStore;
+  } = rootStore.activityStore;
 
   const [activity, setActivity] = useState(new ActivityFormValues());
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-      if (match.params.id) {
-        setLoading(true);
-        loadActivity(match.params.id).then(
-          (activity: Activity) => setActivity(new ActivityFormValues(activity))
-        ).finally(() => setLoading(false));
-      }
-    }, [
-    loadActivity,
-    match.params.id,
-  ]);
+    if (match.params.id) {
+      setLoading(true);
+      loadActivity(match.params.id)
+        .then((activity: Activity) =>
+          setActivity(new ActivityFormValues(activity))
+        )
+        .finally(() => setLoading(false));
+    }
+  }, [loadActivity, match.params.id]);
 
   const handleFinalFormSubmit = (values: any) => {
     const dateAndTime = combineDateAndTime(values.date, values.time);
-    const {date, time, ...activity} = values;
+    const { date, time, ...activity } = values;
     activity.date = dateAndTime;
-    
-    
+
     if (!activity.id) {
       let newActivity = {
         ...activity,
@@ -81,50 +84,50 @@ const ActivityForm = ({
             render={({ handleSubmit, invalid, pristine }) => (
               <Form onSubmit={handleSubmit} loading={loading}>
                 <Field
-                  name='title'
-                  placeholder='Title'
+                  name="title"
+                  placeholder="Title"
                   value={activity.title}
                   component={TextInput}
                 />
                 <Field
                   component={TextAreaInput}
                   value={activity.description}
-                  name='description'
+                  name="description"
                   rows={3}
-                  placeholder='Description'
+                  placeholder="Description"
                 />
                 <Field
                   component={SelectInput}
                   value={activity.category}
                   options={category}
-                  name='category'
-                  placeholder='Category'
+                  name="category"
+                  placeholder="Category"
                 />
-                <Form.Group widths='equal'>
+                <Form.Group widths="equal">
                   <Field
                     component={DateInput}
                     value={activity.date}
                     date={true}
-                    name='date'
-                    placeholder='Date'
+                    name="date"
+                    placeholder="Date"
                   />
                   <Field
                     component={DateInput}
                     value={activity.time}
                     time={true}
-                    name='time'
-                    placeholder='Time'
+                    name="time"
+                    placeholder="Time"
                   />
                 </Form.Group>
                 <Field
-                  name='city'
-                  placeholder='City'
+                  name="city"
+                  placeholder="City"
                   value={activity.city}
                   component={TextInput}
                 />
                 <Field
-                  name='venue'
-                  placeholder='Venue'
+                  name="venue"
+                  placeholder="Venue"
                   value={activity.venue}
                   component={TextInput}
                 />
@@ -132,16 +135,18 @@ const ActivityForm = ({
                   loading={submitting}
                   disabled={invalid || pristine}
                   positive
-                  float='right'
-                  type='submit'
-                  content='Submit'
+                  float="right"
+                  type="submit"
+                  content="Submit"
                 ></Button>
                 <Button
                   as={Link}
-                  to={activity.id ? `/activities/${activity.id}`: '/activities'}
-                  float='right'
-                  type='submit'
-                  content='Cancel'
+                  to={
+                    activity.id ? `/activities/${activity.id}` : '/activities'
+                  }
+                  float="right"
+                  type="submit"
+                  content="Cancel"
                 ></Button>
               </Form>
             )}

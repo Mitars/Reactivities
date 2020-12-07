@@ -2,8 +2,18 @@ import axios, { AxiosResponse } from 'axios';
 import { history } from '../..';
 import { Activity } from '../models/activity';
 import { toast } from 'react-toastify';
+import { User, UserFormValues } from '../models/user';
 
 axios.defaults.baseURL = 'http://localhost:5000/api';
+
+axios.interceptors.request.use(
+  (config) => {
+    const token = window.localStorage.getItem('jwt');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 axios.interceptors.response.use(
   (response) => sleep(0)(response),
@@ -30,7 +40,7 @@ axios.interceptors.response.use(
       toast.error('Server error - check the terminal for more info!');
     }
 
-    throw error;
+    throw error.response;
   }
 );
 
@@ -57,6 +67,15 @@ const Activities = {
   delete: (id: string) => requests.del(`/activities/${id}`),
 };
 
+const UserAgent = {
+  current: (): Promise<User> => requests.get('/user'),
+  login: (user: UserFormValues): Promise<User> =>
+    requests.post('/user/login', user),
+  register: (user: UserFormValues): Promise<User> =>
+    requests.post('/user/register', user),
+};
+
 export default {
   Activities,
+  User: UserAgent,
 };
