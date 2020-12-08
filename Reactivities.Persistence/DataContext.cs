@@ -10,16 +10,20 @@ namespace Reactivities.Persistence
     {
         public DataContext(DbContextOptions options, ILogger<DataContext> logger) : base(options)
         {
-            try {
+            try
+            {
                 this.Database.Migrate();
                 Seed.SeedData(this);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 logger.LogError(ex, "An error occurred during migration");
             }
         }
 
         public DbSet<Value> Values { get; set; }
         public DbSet<Activity> Activities { get; set; }
+        public DbSet<UserActivity> UserActivities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -31,6 +35,18 @@ namespace Reactivities.Persistence
                     new Value { Id = 2, Name = "Value 102" },
                     new Value { Id = 3, Name = "Value 103" }
                 );
+
+            builder.Entity<UserActivity>(x => x.HasKey(userActivity => new { userActivity.AppUserId, userActivity.ActivityId }));
+
+            builder.Entity<UserActivity>()
+                .HasOne(userActivity => userActivity.AppUser)
+                .WithMany(user => user.UserActivities)
+                .HasForeignKey(userActivity => userActivity.AppUserId);
+
+            builder.Entity<UserActivity>()
+                .HasOne(userActivity => userActivity.Activity)
+                .WithMany(user => user.UserActivities)
+                .HasForeignKey(userActivity => userActivity.ActivityId);
         }
     }
 }

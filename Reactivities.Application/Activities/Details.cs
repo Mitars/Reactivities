@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Reactivities.Application.Errors;
 using Reactivities.Domain;
@@ -11,21 +12,23 @@ namespace Reactivities.Application.Activities
 {
     public class Details
     {
-        public record Query : IRequest<Activity>
+        public record Query : IRequest<ActivityDto>
         {
             public Guid Id { get; init; }
         }
 
-        public class Handler : IRequestHandler<Query, Activity>
+        public class Handler : IRequestHandler<Query, ActivityDto>
         {
             private readonly DataContext context;
+            private readonly IMapper mapper;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, IMapper mapper)
             {
                 this.context = context;
+                this.mapper = mapper;
             }
 
-            public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<ActivityDto> Handle(Query request, CancellationToken cancellationToken)
             {
                 var activity = await this.context.Activities.FindAsync(request.Id);
 
@@ -34,7 +37,7 @@ namespace Reactivities.Application.Activities
                     throw new RestException(HttpStatusCode.NotFound, new { activity = "Not found" });
                 }
 
-                return activity;
+                return this.mapper.Map<Activity, ActivityDto>(activity); ;
             }
         }
     }
