@@ -6,7 +6,7 @@ import { LoadingComponent } from '../../../app/layout/LoadingComponent';
 import ActivityDetailedHeader from './ActivityDetailedHeader';
 import { ActivityDetailedInfo } from './ActivityDetailedInfo';
 import { ActivityDetailedChat } from './ActivityDetailedChat';
-import { ActivityDetailedSidebar } from './ActivityDetailedSidebar';
+import ActivityDetailedSidebar from './ActivityDetailedSidebar';
 import { RootStoreContext } from '../../../app/stores/rootStore';
 
 const ActivityDetails = ({ match }: RouteComponentProps<{ id: string }>) => {
@@ -18,7 +18,7 @@ const ActivityDetails = ({ match }: RouteComponentProps<{ id: string }>) => {
   }, [loadActivity, match.params.id]);
 
   if (loadingInitial || !activity)
-    return <LoadingComponent content="Loading Activity..." />;
+    return <LoadingComponent content='Loading Activity...' />;
 
   return (
     <Grid>
@@ -28,7 +28,9 @@ const ActivityDetails = ({ match }: RouteComponentProps<{ id: string }>) => {
         <ActivityDetailedChat></ActivityDetailedChat>
       </Grid.Column>
       <Grid.Column width={6}>
-        <ActivityDetailedSidebar></ActivityDetailedSidebar>
+        <ActivityDetailedSidebar
+          attendees={activity.attendees}
+        ></ActivityDetailedSidebar>
       </Grid.Column>
     </Grid>
   );

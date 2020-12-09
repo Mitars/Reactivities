@@ -6,6 +6,10 @@ export interface Activity {
   date: Date;
   city: string;
   venue: string;
+  attendees: Attendee[];
+
+  isGoing: boolean;
+  isHost: boolean;
 }
 
 export class ActivityFormValues implements Partial<Activity> {
@@ -24,4 +28,11 @@ export class ActivityFormValues implements Partial<Activity> {
       this.time = init.date;
     }
   }
+}
+
+export interface Attendee {
+  userName: string;
+  displayName: string;
+  image: string;
+  isHost: boolean;
 }

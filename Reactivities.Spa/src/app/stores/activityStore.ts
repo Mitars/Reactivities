@@ -1,8 +1,16 @@
-import { action, computed, observable, runInAction, makeObservable } from 'mobx';
+import {
+  action,
+  computed,
+  observable,
+  runInAction,
+  makeObservable,
+  toJS,
+} from 'mobx';
 import { SyntheticEvent } from 'react';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 import agent from '../api/agent';
+import { createAttendee, setActivityProps } from '../common/util/util';
 import { Activity } from '../models/activity';
 import { RootStore } from './rootStore';
 
@@ -12,6 +20,7 @@ export default class ActivityStore {
       activityRegistry: observable,
       activity: observable,
       loadingInitial: observable,
+      loading: observable,
       submitting: observable,
       target: observable,
       activitiesByDate: computed,
@@ -19,13 +28,16 @@ export default class ActivityStore {
       loadActivity: action,
       createActivity: action,
       editActivity: action,
-      deleteActivity: action
+      deleteActivity: action,
+      attendActivity: action,
+      cancelAttendance: action,
     });
   }
 
   activityRegistry = new Map();
   activity: Activity | null = null;
   loadingInitial = false;
+  loading = false;
   submitting = false;
   target = '';
 
@@ -41,7 +53,7 @@ export default class ActivityStore {
       .then((activities) =>
         runInAction(() => {
           activities.forEach((activity) => {
-            activity.date = new Date(activity.date);
+            setActivityProps(activity, toJS(this.rootStore.userStore.user!));
             this.activityRegistry.set(activity.id, activity);
           });
         })
@@ -59,7 +71,7 @@ export default class ActivityStore {
       try {
         activity = await agent.Activities.details(id);
         runInAction(() => {
-          activity.date = new Date(activity.date);
+          setActivityProps(activity, toJS(this.rootStore.userStore.user!));
           this.activity = activity;
           this.activityRegistry.set(activity.id, activity);
           this.loadingInitial = false;
@@ -78,6 +90,10 @@ export default class ActivityStore {
     this.submitting = true;
     agent.Activities.create(activity)
       .then(() => {
+        const attendee = createAttendee(toJS(this.rootStore.userStore.user!));
+        attendee.isHost = true;
+        activity.attendees = [attendee];
+        activity.isHost = true;
         runInAction(() => {
           this.activityRegistry.set(activity.id, activity);
         });
@@ -107,10 +123,7 @@ export default class ActivityStore {
       .finally(() => runInAction(() => (this.submitting = false)));
   };
 
-  deleteActivity = (
-    event: SyntheticEvent<HTMLButtonElement>,
-    id: string
-  ) => {
+  deleteActivity = (event: SyntheticEvent<HTMLButtonElement>, id: string) => {
     this.submitting = true;
     this.target = event.currentTarget.name;
     agent.Activities.delete(id)
@@ -152,5 +165,41 @@ export default class ActivityStore {
 
   getActivity = (id: string) => {
     return this.activityRegistry.get(id);
+  };
+
+  attendActivity = () => {
+    const attendee = createAttendee(toJS(this.rootStore.userStore.user!));
+    this.loading = true;
+    agent.Activities.attend(this.activity!.id)
+      .then(() =>
+        runInAction(() => {
+          if (this.activity) {
+            this.activity.attendees.push(attendee);
+            this.activity.isGoing = true;
+            this.activityRegistry.set(this.activity.id, this.activity);
+          }
+        })
+      )
+      .catch(() => toast.error('Problem signing up to activity'))
+      .finally(() => runInAction(() => (this.loading = false)));
+  };
+
+  cancelAttendance = () => {
+    this.loading = true;
+    agent.Activities.unattend(this.activity!.id)
+      .then(() =>
+        runInAction(() => {
+          if (this.activity) {
+            this.activity.attendees = this.activity.attendees.filter(
+              (a) =>
+                a.userName !== toJS(this.rootStore.userStore.user!.userName)
+            );
+            this.activity.isGoing = false;
+            this.activityRegistry.set(this.activity.id, this.activity);
+          }
+        })
+      )
+      .catch(() => toast.error('Problem cancelling attendance'))
+      .finally(() => runInAction(() => (this.loading = false)));
   };
 }
