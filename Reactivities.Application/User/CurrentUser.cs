@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -41,7 +42,7 @@ namespace Reactivities.Application.User
                     DisplayName = user.DisplayName,
                     UserName = user.UserName,
                     Token = jwtGenerator.CreateToken(user),
-                    Image = null
+                    Image = user.Photos.FirstOrDefault(photo => photo.IsMain)?.Url
                 };
             }
         }

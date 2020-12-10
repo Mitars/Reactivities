@@ -18,6 +18,7 @@ using Reactivities.Api.Middleware;
 using Reactivities.Application.Activities;
 using Reactivities.Application.Interfaces;
 using Reactivities.Domain;
+using Reactivities.Infrastructure.Photos;
 using Reactivities.Infrastructure.Security;
 using Reactivities.Persistence;
 
@@ -27,7 +28,7 @@ namespace Reactivities.Api
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -38,7 +39,7 @@ namespace Reactivities.Api
             var dbContext = services.AddDbContext<DataContext>(options =>
             {
                 options.UseLazyLoadingProxies();
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlite(this.Configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000")));
             services.AddMediatR(typeof(List.Handler).Assembly);
@@ -61,7 +62,7 @@ namespace Reactivities.Api
             });
             services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.Configuration["TokenKey"]));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(opt => opt.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -73,6 +74,8 @@ namespace Reactivities.Api
 
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<IUserAccessor, UserAccessor>();
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+            services.Configure<CloudinarySettings>(this.Configuration.GetSection("Cloudinary"));
 
             services.AddSwaggerGen(c =>
             {

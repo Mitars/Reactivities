@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -87,7 +88,7 @@ namespace Reactivities.Application.User
                     DisplayName = user.DisplayName,
                     Token = this.jwtGenerator.CreateToken(user),
                     UserName = user.UserName,
-                    Image = null
+                    Image = user.Photos.FirstOrDefault(photo => photo.IsMain)?.Url
                 };
             }
         }
