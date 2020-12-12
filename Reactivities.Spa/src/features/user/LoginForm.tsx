@@ -2,7 +2,7 @@ import { FORM_ERROR } from 'final-form';
 import React, { useContext } from 'react';
 import { Form as FinalForm, Field } from 'react-final-form';
 import { combineValidators, isRequired } from 'revalidate';
-import { Button, Form, Header, Label } from 'semantic-ui-react';
+import { Button, Form, Header } from 'semantic-ui-react';
 import { TextInput } from '../../app/common/form/TextInput';
 import { UserFormValues } from '../../app/models/user';
 import { RootStoreContext } from '../../app/stores/rootStore';

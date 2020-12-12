@@ -3,6 +3,7 @@ import { history } from '../..';
 import { Activity } from '../models/activity';
 import { toast } from 'react-toastify';
 import { User, UserFormValues } from '../models/user';
+import { Photo, Profile } from '../models/profile';
 
 axios.defaults.baseURL = 'http://localhost:5000/api';
 
@@ -16,7 +17,7 @@ axios.interceptors.request.use(
 );
 
 axios.interceptors.response.use(
-  (response) => sleep(0)(response),
+  (response) => sleep(1_000)(response),
   (error) => {
     if (error.message === 'Network Error' && !error.response) {
       toast.error('Network error - make sure API is running!');
@@ -56,6 +57,15 @@ const requests = {
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
   del: (url: string) => axios.delete(url).then(responseBody),
+  postForm: (url: string, file: Blob) => {
+    let formData = new FormData();
+    formData.append('File', file);
+    return axios
+      .post(url, formData, {
+        headers: { 'Content-type': 'multipart/form-data' },
+      })
+      .then(responseBody);
+  },
 };
 
 const Activities = {
@@ -77,7 +87,17 @@ const UserAgent = {
     requests.post('/user/register', user),
 };
 
+const Profiles = {
+  get: (username: string): Promise<Profile> =>
+    requests.get(`/profiles/${username}`),
+  uploadPhoto: (photo: Blob): Promise<Photo> =>
+    requests.postForm(`/photos`, photo),
+  setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
+  deletePhoto: (id: string) => requests.del(`/photos/${id}`),
+};
+
 export default {
   Activities,
   User: UserAgent,
+  Profiles,
 };

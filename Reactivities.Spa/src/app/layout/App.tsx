@@ -12,12 +12,12 @@ import { HomePage } from '../../features/home/HomePage';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
 import ActivityForm from '../../features/activities/form/ActivityForm';
 import ActivityDetails from '../../features/activities/details/ActivityDetails';
-import { LoginForm } from '../../features/user/LoginForm';
 import NotFound from './NotFound';
 import { ToastContainer } from 'react-toastify';
 import { RootStoreContext } from '../stores/rootStore';
 import { LoadingComponent } from './LoadingComponent';
 import ModalContainer from '../common/modal/ModalContainer';
+import ProfilePage from '../../features/profiles/ProfilePage';
 
 const App = ({ location }: RouteComponentProps) => {
   const rootStore = useContext(RootStoreContext);
@@ -32,7 +32,7 @@ const App = ({ location }: RouteComponentProps) => {
     } else {
       setAppLoaded();
     }
-  }, [getUser, token]);
+  }, [getUser, token, setAppLoaded]);
 
   if (!appLoaded) return <LoadingComponent content="Loading app..." />;
 
@@ -55,7 +55,7 @@ const App = ({ location }: RouteComponentProps) => {
                   path={['/createActivity', '/manage/:id']}
                   component={ActivityForm}
                 />
-                <Route path="/login" component={LoginForm} />
+                <Route path="/profile/:username" component={ProfilePage} />
                 <Route component={NotFound} />
               </Switch>
             </Container>
