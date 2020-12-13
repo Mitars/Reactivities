@@ -15,7 +15,7 @@ const ProfilePhotos = () => {
     loading,
     deletePhoto,
   } = rootStore.profileStore;
-  const [addPhotoMode, setAddPhotoMode] = useState(true);
+  const [addPhotoMode, setAddPhotoMode] = useState(false);
   const [mainTarget, setMainTarget] = useState<string | undefined>(undefined);
   const [deleteTarget, setDeleteTarget] = useState<string | undefined>(
     undefined

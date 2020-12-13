@@ -4,6 +4,7 @@ import {
   computed,
   makeObservable,
   runInAction,
+  toJS,
 } from 'mobx';
 import { toast } from 'react-toastify';
 import agent from '../api/agent';
@@ -15,10 +16,12 @@ export default class ProfileStore {
     makeObservable(this, {
       profile: observable,
       loadingProfile: observable,
+      updatingProfile: observable,
       uploadingPhoto: observable,
       loading: observable,
       loadProfile: action,
       uploadPhoto: action,
+      updateProfile: action,
       setMainPhoto: action,
       deletePhoto: action,
       isCurrentUser: computed,
@@ -28,6 +31,7 @@ export default class ProfileStore {
   profile: Profile | null = null;
   loadingProfile = true;
   uploadingPhoto = false;
+  updatingProfile = false;
   loading = false;
 
   get isCurrentUser() {
@@ -58,8 +62,6 @@ export default class ProfileStore {
               this.profile.image = photo.url;
             }
           }
-
-          this.uploadingPhoto = false;
         })
       )
       .catch((error) => {
@@ -67,6 +69,27 @@ export default class ProfileStore {
         toast.error('Problem uploading photo');
       })
       .finally(() => runInAction(() => (this.uploadingPhoto = false)));
+  };
+
+  updateProfile = async (profile: Partial<Profile>) => {
+    this.updatingProfile = true;
+    await agent.Profiles.update(profile)
+      .then(() =>
+        runInAction(() => {
+          if (
+            profile.displayName !== this.rootStore.userStore.user!.displayName
+          ) {
+            this.rootStore.userStore.user!.displayName = profile.displayName!;
+          }
+
+          this.profile = { ...this.profile!, ...profile };
+        })
+      )
+      .catch((error) => {
+        console.error(error);
+        toast.error('Problem updating profile');
+      })
+      .finally(() => runInAction(() => (this.updatingProfile = false)));
   };
 
   setMainPhoto = (photo: Photo) => {

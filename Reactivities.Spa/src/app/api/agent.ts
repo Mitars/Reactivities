@@ -90,6 +90,7 @@ const UserAgent = {
 const Profiles = {
   get: (username: string): Promise<Profile> =>
     requests.get(`/profiles/${username}`),
+  update: (profile: Partial<Profile>) => requests.put(`/profiles`, profile),
   uploadPhoto: (photo: Blob): Promise<Photo> =>
     requests.postForm(`/photos`, photo),
   setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
