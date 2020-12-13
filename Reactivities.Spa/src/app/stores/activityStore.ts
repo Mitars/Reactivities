@@ -13,6 +13,11 @@ import agent from '../api/agent';
 import { createAttendee, setActivityProps } from '../common/util/util';
 import { Activity } from '../models/activity';
 import { RootStore } from './rootStore';
+import {
+  HubConnection,
+  HubConnectionBuilder,
+  LogLevel,
+} from '@microsoft/signalr';
 
 export default class ActivityStore {
   constructor(private rootStore: RootStore) {
@@ -23,6 +28,7 @@ export default class ActivityStore {
       loading: observable,
       submitting: observable,
       target: observable,
+      hubConnection: observable.ref,
       activitiesByDate: computed,
       loadActivities: action,
       loadActivity: action,
@@ -31,6 +37,9 @@ export default class ActivityStore {
       deleteActivity: action,
       attendActivity: action,
       cancelAttendance: action,
+      createHubConnection: action,
+      stopHubConnection: action,
+      addComment: action,
     });
   }
 
@@ -40,6 +49,7 @@ export default class ActivityStore {
   loading = false;
   submitting = false;
   target = '';
+  hubConnection: HubConnection | null = null;
 
   get activitiesByDate() {
     return this.groupActivitiesByDate(
@@ -62,27 +72,21 @@ export default class ActivityStore {
   };
 
   loadActivity = async (id: string) => {
-    let activity = this.getActivity(id);
-    if (activity) {
-      this.activity = activity;
+    this.loadingInitial = true;
+    try {
+      const activity = await agent.Activities.details(id);
+      runInAction(() => {
+        setActivityProps(activity, toJS(this.rootStore.userStore.user!));
+        this.activity = activity;
+        this.activityRegistry.set(activity.id, activity);
+        this.loadingInitial = false;
+      });
       return activity;
-    } else {
-      this.loadingInitial = true;
-      try {
-        activity = await agent.Activities.details(id);
-        runInAction(() => {
-          setActivityProps(activity, toJS(this.rootStore.userStore.user!));
-          this.activity = activity;
-          this.activityRegistry.set(activity.id, activity);
-          this.loadingInitial = false;
-        });
-        return activity;
-      } catch (error) {
-        runInAction(() => {
-          this.loadingInitial = false;
-        });
-        console.log(error.response);
-      }
+    } catch (error) {
+      runInAction(() => {
+        this.loadingInitial = false;
+      });
+      console.log(error.response);
     }
   };
 
@@ -94,6 +98,7 @@ export default class ActivityStore {
         attendee.isHost = true;
         activity.attendees = [attendee];
         activity.isHost = true;
+        activity.comments = [];
         runInAction(() => {
           this.activityRegistry.set(activity.id, activity);
         });
@@ -201,5 +206,46 @@ export default class ActivityStore {
       )
       .catch(() => toast.error('Problem cancelling attendance'))
       .finally(() => runInAction(() => (this.loading = false)));
+  };
+
+  createHubConnection = (activityId: string) => {
+    if (!this.hubConnection) {
+      this.hubConnection = new HubConnectionBuilder()
+        .withUrl('http://localhost:5000/chat', {
+          accessTokenFactory: () => this.rootStore.commonStore.token!,
+        })
+        .configureLogging(LogLevel.Information)
+        .build();    
+
+      this.hubConnection.on('ReceiveComment', (comment) => runInAction(() => this.activity!.comments.push(comment)));
+
+      // Debug info
+      // this.hubConnection.on('Send', (message) => toast.info(message));
+    }
+
+    if (this.hubConnection!.state === "Disconnected") {
+      this.hubConnection
+        .start()
+        .then(() => this.hubConnection!.invoke('AddToGroup', activityId))
+        .catch(error => console.error("Error establishing connection: ", error));
+    }
+    else if(this.hubConnection!.state === "Connected") {
+      this.hubConnection!.invoke('AddToGroup', activityId)
+    }
+  };
+
+  stopHubConnection = () => {
+    if (this.hubConnection?.state === "Connected") {
+      this.hubConnection!.invoke('RemoveFromGroup', this.activity!.id)
+        .then(() => this.hubConnection!.stop())
+        .catch((error) => console.error(error));
+    }
+  };
+
+  addComment = async (values: { activityId: string }) => {
+    values.activityId = this.activity!.id;
+    this.hubConnection!.invoke('SendComment', values).catch((error) =>
+      console.error(error)
+    );
   };
 }

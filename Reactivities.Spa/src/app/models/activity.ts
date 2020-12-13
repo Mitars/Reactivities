@@ -7,6 +7,7 @@ export interface Activity {
   city: string;
   venue: string;
   attendees: Attendee[];
+  comments: Comment[];
 
   isGoing: boolean;
   isHost: boolean;
@@ -35,4 +36,13 @@ export interface Attendee {
   displayName: string;
   image: string;
   isHost: boolean;
+}
+
+export interface Comment {
+  id: string;
+  createdAt: Date;
+  body: string;
+  username: string;
+  displayName: string;
+  image: string;
 }
