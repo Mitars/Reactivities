@@ -218,9 +218,7 @@ export default class ActivityStore {
         .build();    
 
       this.hubConnection.on('ReceiveComment', (comment) => runInAction(() => this.activity!.comments.push(comment)));
-
-      // Debug info
-      // this.hubConnection.on('Send', (message) => toast.info(message));
+      this.hubConnection.on('Send', (message) => {/*toast.info(message)*/});
     }
 
     if (this.hubConnection!.state === "Disconnected") {
@@ -228,9 +226,8 @@ export default class ActivityStore {
         .start()
         .then(() => this.hubConnection!.invoke('AddToGroup', activityId))
         .catch(error => console.error("Error establishing connection: ", error));
-    }
-    else if(this.hubConnection!.state === "Connected") {
-      this.hubConnection!.invoke('AddToGroup', activityId)
+    } else if(this.hubConnection!.state === "Connected") {
+      this.hubConnection!.invoke('AddToGroup', activityId);
     }
   };
 

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Grid } from 'semantic-ui-react';
 import { LoadingComponent } from '../../../app/layout/LoadingComponent';
@@ -12,9 +12,10 @@ import { RootStoreContext } from '../../../app/stores/rootStore';
 const ActivityDetails = ({ match }: RouteComponentProps<{ id: string }>) => {
   const rootStore = useContext(RootStoreContext);
   const { activity, loadActivity, loadingInitial } = rootStore.activityStore;
+  const [ initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
-    loadActivity(match.params.id);
+    loadActivity(match.params.id).then(() => setInitialLoad(false));
   }, [loadActivity, match.params.id]);
 
   if (loadingInitial || !activity)
@@ -23,9 +24,9 @@ const ActivityDetails = ({ match }: RouteComponentProps<{ id: string }>) => {
   return (
     <Grid>
       <Grid.Column width={10}>
-        <ActivityDetailedHeader activity={activity}></ActivityDetailedHeader>
-        <ActivityDetailedInfo activity={activity}></ActivityDetailedInfo>
-        <ActivityDetailedChat></ActivityDetailedChat>
+        <ActivityDetailedHeader activity={activity} />
+        <ActivityDetailedInfo activity={activity} />
+        {!initialLoad && <ActivityDetailedChat/>}
       </Grid.Column>
       <Grid.Column width={6}>
         <ActivityDetailedSidebar
