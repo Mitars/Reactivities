@@ -36,6 +36,7 @@ export interface Attendee {
   displayName: string;
   image: string;
   isHost: boolean;
+  following?: boolean;
 }
 
 export interface Comment {

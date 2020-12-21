@@ -49,6 +49,11 @@ namespace Reactivities.Persistence
                 .HasOne(userActivity => userActivity.Activity)
                 .WithMany(user => user.UserActivities)
                 .HasForeignKey(userActivity => userActivity.ActivityId);
+
+            builder.Entity<AppUser>()
+                .HasMany(left => left.Followers)
+                .WithMany(right => right.Followings)
+                .UsingEntity(join => join.ToTable("UserFollowing"));
         }
     }
 }

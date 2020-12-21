@@ -86,7 +86,6 @@ export default class ActivityStore {
       runInAction(() => {
         this.loadingInitial = false;
       });
-      console.log(error.response);
     }
   };
 
@@ -215,24 +214,30 @@ export default class ActivityStore {
           accessTokenFactory: () => this.rootStore.commonStore.token!,
         })
         .configureLogging(LogLevel.Information)
-        .build();    
+        .build();
 
-      this.hubConnection.on('ReceiveComment', (comment) => runInAction(() => this.activity!.comments.push(comment)));
-      this.hubConnection.on('Send', (message) => {/*toast.info(message)*/});
+      this.hubConnection.on('ReceiveComment', (comment) =>
+        runInAction(() => this.activity!.comments.push(comment))
+      );
+      this.hubConnection.on('Send', (message) => {
+        /*toast.info(message)*/
+      });
     }
 
-    if (this.hubConnection!.state === "Disconnected") {
+    if (this.hubConnection!.state === 'Disconnected') {
       this.hubConnection
         .start()
         .then(() => this.hubConnection!.invoke('AddToGroup', activityId))
-        .catch(error => console.error("Error establishing connection: ", error));
-    } else if(this.hubConnection!.state === "Connected") {
+        .catch((error) =>
+          console.error('Error establishing connection: ', error)
+        );
+    } else if (this.hubConnection!.state === 'Connected') {
       this.hubConnection!.invoke('AddToGroup', activityId);
     }
   };
 
   stopHubConnection = () => {
-    if (this.hubConnection?.state === "Connected") {
+    if (this.hubConnection?.state === 'Connected') {
       this.hubConnection!.invoke('RemoveFromGroup', this.activity!.id)
         .then(() => this.hubConnection!.stop())
         .catch((error) => console.error(error));

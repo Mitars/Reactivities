@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Reactivities.Domain;
 
 namespace Reactivities.Application.Profiles
@@ -10,5 +11,9 @@ namespace Reactivities.Application.Profiles
         public string Image { get; init; }
         public string Bio { get; init; }
         public ICollection<Photo> Photos { get; init; }
+        [JsonPropertyName("following")]
+        public bool IsFollowed { get; init; }
+        public int FollowersCount { get; init; }
+        public int FollowingCount { get; init; }
     }
 }
