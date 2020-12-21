@@ -5,6 +5,7 @@ import {
   runInAction,
   makeObservable,
   toJS,
+  reaction,
 } from 'mobx';
 import { SyntheticEvent } from 'react';
 import { toast } from 'react-toastify';
@@ -19,6 +20,8 @@ import {
   LogLevel,
 } from '@microsoft/signalr';
 
+const LIMIT = 2;
+
 export default class ActivityStore {
   constructor(private rootStore: RootStore) {
     makeObservable(this, {
@@ -28,8 +31,12 @@ export default class ActivityStore {
       loading: observable,
       submitting: observable,
       target: observable,
+      activityCount: observable,
+      page: observable,
+      predicate: observable,
       hubConnection: observable.ref,
       activitiesByDate: computed,
+      totalPages: computed,
       loadActivities: action,
       loadActivity: action,
       createActivity: action,
@@ -40,7 +47,18 @@ export default class ActivityStore {
       createHubConnection: action,
       stopHubConnection: action,
       addComment: action,
+      setPage: action,
+      setPredicate: action,
     });
+
+    reaction(
+      () => this.predicate.keys(),
+      () => {
+        this.page = 0;
+        this.activityRegistry.clear();
+        this.loadActivities();
+      }
+    );
   }
 
   activityRegistry = new Map();
@@ -50,6 +68,9 @@ export default class ActivityStore {
   submitting = false;
   target = '';
   hubConnection: HubConnection | null = null;
+  activityCount: number = 0;
+  page: number = 0;
+  predicate = new Map();
 
   get activitiesByDate() {
     return this.groupActivitiesByDate(
@@ -57,15 +78,20 @@ export default class ActivityStore {
     );
   }
 
-  loadActivities = () => {
+  get totalPages() {
+    return Math.ceil(this.activityCount / LIMIT);
+  }
+
+  loadActivities = async () => {
     this.loadingInitial = true;
-    agent.Activities.list()
-      .then((activities) =>
+    await agent.Activities.list(this.axiosParams)
+      .then((activityList) =>
         runInAction(() => {
-          activities.forEach((activity) => {
+          activityList.activities.forEach((activity) => {
             setActivityProps(activity, toJS(this.rootStore.userStore.user!));
             this.activityRegistry.set(activity.id, activity);
           });
+          this.activityCount = activityList.activityCount;
         })
       )
       .finally(() => runInAction(() => (this.loadingInitial = false)));
@@ -250,4 +276,27 @@ export default class ActivityStore {
       console.error(error)
     );
   };
+
+  setPage = (page: number) => (this.page = page);
+
+  setPredicate = (predicate: string, value: string | Date) => {
+    this.predicate.clear();
+    if (predicate !== 'all') {
+      this.predicate.set(predicate, value);
+    }
+  };
+
+  @computed get axiosParams() {
+    const params = new URLSearchParams();
+    params.append('limit', String(LIMIT));
+    params.append('offset', `${this.page ? this.page * LIMIT : 0}`);
+    this.predicate.forEach((value, key) => {
+      if (key === 'startDate') {
+        params.append(key, value.toISOString());
+      } else {
+        params.append(key, value);
+      }
+    });
+    return params;
+  }
 }

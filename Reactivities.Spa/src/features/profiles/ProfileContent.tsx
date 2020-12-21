@@ -2,6 +2,7 @@ import React from 'react';
 import { Tab } from 'semantic-ui-react';
 import ProfilePhotos from './ProfilePhotos';
 import ProfileAbout from './ProfileAbout';
+import ProfileActivities from './ProfileActivities';
 import ProfileFollowing from './ProfileFollowing';
 
 const panes = [
@@ -9,7 +10,7 @@ const panes = [
   { menuItem: 'Photos', render: () => <ProfilePhotos /> },
   {
     menuItem: 'Activities',
-    render: () => <Tab.Pane>Activities content</Tab.Pane>,
+    render: () => <ProfileActivities />,
   },
   {
     menuItem: 'Followers',

@@ -8,7 +8,7 @@ import {
 } from 'mobx';
 import { toast } from 'react-toastify';
 import agent from '../api/agent';
-import { Photo, Profile } from '../models/profile';
+import { Photo, Profile, UserActivity } from '../models/profile';
 import { RootStore } from './rootStore';
 
 export default class ProfileStore {
@@ -21,6 +21,8 @@ export default class ProfileStore {
       loading: observable,
       followings: observable,
       activeTab: observable,
+      userActivities: observable,
+      loadingActivities: observable,
       loadProfile: action,
       uploadPhoto: action,
       updateProfile: action,
@@ -30,6 +32,7 @@ export default class ProfileStore {
       unfollow: action,
       loadFollowings: action,
       setActiveTab: action,
+      loadUserActivities: action,
       isCurrentUser: computed,
     });
 
@@ -52,6 +55,8 @@ export default class ProfileStore {
   loading = false;
   followings: Profile[] = [];
   activeTab: number = 0;
+  userActivities: UserActivity[] = [];
+  loadingActivities = false;
 
   get isCurrentUser() {
     if (this.rootStore.userStore.user && this.profile) {
@@ -192,5 +197,13 @@ export default class ProfileStore {
 
   setActiveTab = (activeIndex: number) => (this.activeTab = activeIndex);
 
-  setActiveTabReaction = () => {};
+  loadUserActivities = (username: string, predicate?: string) => {
+    this.loadingActivities = true;
+    agent.Profiles.listActivities(username, predicate!)
+      .then((activities) =>
+        runInAction(() => (this.userActivities = activities))
+      )
+      .catch(() => toast.error('Problem loading activities'))
+      .finally(() => runInAction(() => (this.loadingActivities = false)));
+  };
 }

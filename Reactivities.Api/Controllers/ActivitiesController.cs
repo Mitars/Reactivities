@@ -12,8 +12,8 @@ namespace Reactivities.Api.Controllers
     public class ActivitiesController : MediatorControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<List<ActivityDto>>> List(CancellationToken ct) =>
-            await this.Mediator.Send(new List.Query());
+        public async Task<ActionResult<List.Response>> List([FromQuery] List.Query query) =>
+            await this.Mediator.Send(query);
 
         [HttpGet("{id}")]
         [Authorize]
