@@ -23,10 +23,21 @@ axios.interceptors.response.use(
       toast.error('Network error - make sure API is running!');
     }
 
-    console.error(error);
-    const { status, data, config } = error.response;
+    //console.error(error);
+    const { status, data, config, headers } = error.response;
     if (status === 404) {
       history.push('/notfound');
+    }
+
+    if (
+      status === 401 &&
+      headers['www-authenticate'].includes(
+        'Bearer error="invalid_token", error_description="The token expired'
+      )
+    ) {
+      window.localStorage.removeItem('jwt');
+      history.push('/');
+      toast.info('Your session has expired, please login again');
     }
 
     if (

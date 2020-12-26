@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -44,7 +45,7 @@ namespace Reactivities.Api
                 options.UseLazyLoadingProxies();
                 options.UseSqlite(this.Configuration.GetConnectionString("DefaultConnection"));
             });
-            services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials()));
+            services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => policy.AllowAnyHeader().WithExposedHeaders("WWW-Authenticate").AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials()));
             services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddAutoMapper(typeof(List.Handler));
             services.AddSignalR();
@@ -76,6 +77,8 @@ namespace Reactivities.Api
                         IssuerSigningKey = key,
                         ValidateAudience = false,
                         ValidateIssuer = false,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
                     };
                     opt.Events = new JwtBearerEvents
                     {
