@@ -87,6 +87,7 @@ export default class ActivityStore {
     await agent.Activities.list(this.axiosParams)
       .then((activityList) =>
         runInAction(() => {
+          if (this.rootStore.userStore.user === null) return;
           activityList.activities.forEach((activity) => {
             setActivityProps(activity, toJS(this.rootStore.userStore.user!));
             this.activityRegistry.set(activity.id, activity);
