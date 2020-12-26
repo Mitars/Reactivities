@@ -17,7 +17,7 @@ axios.interceptors.request.use(
 );
 
 axios.interceptors.response.use(
-  (response) => sleep(1_000)(response),
+  (response) => response,
   (error) => {
     if (error.message === 'Network Error' && !error.response) {
       toast.error('Network error - make sure API is running!');
@@ -81,10 +81,7 @@ const requests = {
 
 const Activities = {
   list: (params: URLSearchParams): Promise<ActivityList> =>
-    axios
-      .get(`/activities`, { params: params })
-      .then(sleep(1_000))
-      .then(responseBody),
+    axios.get(`/activities`, { params: params }).then(responseBody),
   details: (id: string) => requests.get(`/activities/${id}`),
   create: (activity: Activity) => requests.post('/activities', activity),
   update: (activity: Activity) =>
