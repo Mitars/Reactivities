@@ -11,6 +11,7 @@ appsettings*.json
 
 # data
 *.db
+wwwroot
 
 # dependencies
 node_modules
