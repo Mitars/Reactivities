@@ -2,10 +2,8 @@ import { Activity, Attendee } from '../../models/activity';
 import { User } from '../../models/user';
 
 export const combineDateAndTime = (date: Date, time: Date) => {
-  const dateString = `${date.getFullYear()}-${
-    date.getMonth() + 1
-  }-${date.getDate()}`;
-  const timeString = `${time.getHours()}:${time.getMinutes()}:00`;
+  const dateString = date.toISOString().split('T')[0];
+  const timeString = date.toISOString().split('T')[1];
   return new Date(dateString + ' ' + timeString);
 };
 
