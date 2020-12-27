@@ -12,6 +12,7 @@ appsettings*.json
 # data
 *.db
 wwwroot
+publish
 
 # dependencies
 node_modules

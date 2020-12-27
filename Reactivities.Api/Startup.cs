@@ -37,14 +37,30 @@ namespace Reactivities.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             var dbContext = services.AddDbContext<DataContext>(options =>
             {
                 options.UseLazyLoadingProxies();
                 options.UseSqlite(this.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            this.ConfigureServices(services);
+        }
+
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            var dbContext = services.AddDbContext<DataContext>(options =>
+            {
+                options.UseLazyLoadingProxies();
+                options.UseMySql(this.Configuration.GetConnectionString("DefaultConnection"), MySqlServerVersion.LatestSupportedServerVersion);
+            });
+
+            this.ConfigureServices(services);
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
             services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy => policy.AllowAnyHeader().WithExposedHeaders("WWW-Authenticate").AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials()));
             services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddAutoMapper(typeof(List.Handler));
