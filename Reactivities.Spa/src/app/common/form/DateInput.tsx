@@ -13,7 +13,7 @@ export const DateInput = ({
   date = false,
   time = false,
   placeholder,
-  meta: { touched, error }
+  meta: { touched, error },
 }: IProps) => {
   return (
     <Form.Field error={touched && !!error} width={width}>
