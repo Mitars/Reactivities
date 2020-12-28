@@ -9,8 +9,10 @@ using Reactivities.Application.Interfaces;
 using Reactivities.Domain;
 using Reactivities.Persistence;
 
-namespace Reactivities.Application.Photos {
-    public class Add {
+namespace Reactivities.Application.Photos
+{
+    public class Add
+    {
         public record Command : IRequest<Photo>
         {
             public IFormFile File { get; set; }
@@ -22,14 +24,14 @@ namespace Reactivities.Application.Photos {
             private readonly IUserAccessor userAccessor;
             private readonly IPhotoAccessor photoAccessor;
 
-            public Handler (DataContext context, IUserAccessor userAccessor, IPhotoAccessor photoAccessor)
+            public Handler(DataContext context, IUserAccessor userAccessor, IPhotoAccessor photoAccessor)
             {
                 this.context = context;
                 this.userAccessor = userAccessor;
                 this.photoAccessor = photoAccessor;
             }
 
-            public async Task<Photo> Handle (Command request, CancellationToken cancellationToken)
+            public async Task<Photo> Handle(Command request, CancellationToken cancellationToken)
             {
                 var photoUploadResult = this.photoAccessor.AddPhoto(request.File);
 
@@ -48,7 +50,7 @@ namespace Reactivities.Application.Photos {
 
                 user.Photos.Add(photo);
 
-                var success = await this.context.SaveChangesAsync () > 0;
+                var success = await this.context.SaveChangesAsync() > 0;
 
                 if (success)
                 {
