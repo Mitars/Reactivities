@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -10,17 +9,9 @@ namespace Reactivities.Application.User
 {
     public class CurrentUser
     {
-        public record Query : IRequest<Response> { }
+        public record Query : IRequest<UserDto> { }
 
-        public record Response
-        {
-            public string DisplayName { get; init; }
-            public string Token { get; init; }
-            public string UserName { get; init; }
-            public string Image { get; init; }
-        }
-
-        public class Handler : IRequestHandler<Query, Response>
+        public class Handler : IRequestHandler<Query, UserDto>
         {
             private readonly UserManager<AppUser> userManager;
             private readonly IJwtGenerator jwtGenerator;
@@ -33,17 +24,14 @@ namespace Reactivities.Application.User
                 this.userManager = userManager;
             }
 
-            public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<UserDto> Handle(Query request, CancellationToken cancellationToken)
             {
                 var user = await this.userManager.FindByNameAsync(this.userAccessor.GetCurrentUserName());
+                var refreshToken = this.jwtGenerator.GenerateRefreshToken();
+                user.RefreshTokens.Add(refreshToken);
+                await this.userManager.UpdateAsync(user);
 
-                return new Response
-                {
-                    DisplayName = user.DisplayName,
-                    UserName = user.UserName,
-                    Token = jwtGenerator.CreateToken(user),
-                    Image = user.Photos.FirstOrDefault(photo => photo.IsMain)?.Url
-                };
+                return new UserDto(user, jwtGenerator, refreshToken.Token);
             }
         }
     }

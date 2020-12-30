@@ -17,7 +17,7 @@ namespace Reactivities.Application.User
 {
     public class Register
     {
-        public record Command : IRequest<Response>
+        public record Command : IRequest<UserDto>
         {
             public string DisplayName { get; init; }
             public string UserName { get; init; }
@@ -36,15 +36,7 @@ namespace Reactivities.Application.User
             }
         }
 
-        public record Response
-        {
-            public string DisplayName { get; init; }
-            public string Token { get; init; }
-            public string UserName { get; init; }
-            public string Image { get; init; }
-        }
-
-        public class Handler : IRequestHandler<Command, Response>
+        public class Handler : IRequestHandler<Command, UserDto>
         {
             private readonly DataContext context;
             private readonly UserManager<AppUser> userManager;
@@ -57,7 +49,7 @@ namespace Reactivities.Application.User
                 this.jwtGenerator = jwtGenerator;
             }
 
-            public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<UserDto> Handle(Command request, CancellationToken cancellationToken)
             {
                 if (await this.context.Users.AnyAsync(user => user.Email == request.Email))
                 {
@@ -76,6 +68,8 @@ namespace Reactivities.Application.User
                     UserName = request.UserName
                 };
 
+                var refreshToken = this.jwtGenerator.GenerateRefreshToken();
+                user.RefreshTokens.Add(refreshToken);
                 var result = await this.userManager.CreateAsync(user, request.Password);
 
                 if (!result.Succeeded)
@@ -83,13 +77,7 @@ namespace Reactivities.Application.User
                     throw new Exception("Problem creating user");
                 }
 
-                return new Response
-                {
-                    DisplayName = user.DisplayName,
-                    Token = this.jwtGenerator.CreateToken(user),
-                    UserName = user.UserName,
-                    Image = user.Photos.FirstOrDefault(photo => photo.IsMain)?.Url
-                };
+                return new UserDto(user, jwtGenerator, refreshToken.Token);
             }
         }
     }

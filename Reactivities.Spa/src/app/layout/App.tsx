@@ -26,14 +26,14 @@ const App = ({ location }: RouteComponentProps) => {
   const { getUser } = rootStore.userStore;
 
   useEffect(() => {
-    if (token) {
+    if (token && !appLoaded) {
       getUser().finally(() => {
         setAppLoaded();
       });
     } else {
       setAppLoaded();
     }
-  }, [getUser, token, setAppLoaded]);
+  }, [getUser, token, setAppLoaded, appLoaded]);
 
   if (!appLoaded) return <LoadingComponent content="Loading app..." />;
 

@@ -94,6 +94,7 @@ const UserAgent = {
     requests.post('/user/register', user),
   facebookLogin: (accessToken: string) =>
     requests.post('/user/facebook', { accessToken }),
+  refreshToken: (): Promise<User> => requests.post('/user/refreshToken', {})
 };
 
 const Profiles = {
@@ -113,8 +114,10 @@ const Profiles = {
     requests.get(`profiles/${username}/activities?predicate=${predicate}`),
 };
 
-export default {
+const AgentCalls = {
   Activities,
   User: UserAgent,
   Profiles,
 };
+
+export default AgentCalls;

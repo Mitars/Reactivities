@@ -13,7 +13,7 @@ namespace Reactivities.Application.User
 {
     public class Login
     {
-        public record Query : IRequest<Response>
+        public record Query : IRequest<UserDto>
         {
             public string Email { get; init; }
             public string Password { get; init; }
@@ -28,15 +28,7 @@ namespace Reactivities.Application.User
             }
         }
 
-        public record Response
-        {
-            public string DisplayName { get; init; }
-            public string Token { get; init; }
-            public string UserName { get; init; }
-            public string Image { get; init; }
-        }
-
-        public class Handler : IRequestHandler<Query, Response>
+        public class Handler : IRequestHandler<Query, UserDto>
         {
             private readonly UserManager<AppUser> userManager;
             private readonly SignInManager<AppUser> signInManager;
@@ -49,7 +41,7 @@ namespace Reactivities.Application.User
                 this.signInManager = signInManager;
             }
 
-            public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<UserDto> Handle(Query request, CancellationToken cancellationToken)
             {
                 var user = await this.userManager.FindByEmailAsync(request.Email);
                 if (user == null)
@@ -63,13 +55,11 @@ namespace Reactivities.Application.User
                     throw new RestException(HttpStatusCode.Unauthorized);
                 }
 
-                return new Response
-                {
-                    DisplayName = user.DisplayName,
-                    Token = this.jwtGenerator.CreateToken(user),
-                    UserName = user.UserName,
-                    Image = user.Photos.FirstOrDefault(photo => photo.IsMain)?.Url
-                };
+                var refreshToken = this.jwtGenerator.GenerateRefreshToken();
+                user.RefreshTokens.Add(refreshToken);
+                await this.userManager.UpdateAsync(user);
+
+                return new UserDto(user, jwtGenerator, refreshToken.Token);
             }
         }
     }

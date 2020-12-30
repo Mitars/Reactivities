@@ -17,5 +17,6 @@ namespace Reactivities.Domain
         public virtual ICollection<Photo> Photos { get; set; }
         public virtual ICollection<AppUser> Followings { get; set; }
         public virtual ICollection<AppUser> Followers { get; set; }
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }
