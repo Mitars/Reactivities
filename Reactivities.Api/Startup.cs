@@ -115,7 +115,9 @@ namespace Reactivities.Api
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.AddScoped<IProfileReader, ProfileReader>();
+            services.AddScoped<IFacebookAccessor, FacebookAccessor>();
             services.Configure<CloudinarySettings>(this.Configuration.GetSection("Cloudinary"));
+            services.Configure<FacebookAppSettings>(this.Configuration.GetSection("Authentication:Facebook"));
 
             services.AddSwaggerGen(c =>
             {

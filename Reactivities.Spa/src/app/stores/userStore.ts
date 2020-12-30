@@ -1,4 +1,10 @@
-import { action, computed, observable, runInAction, makeObservable } from 'mobx';
+import {
+  action,
+  computed,
+  observable,
+  runInAction,
+  makeObservable,
+} from 'mobx';
 import { User, UserFormValues } from '../models/user';
 import agent from '../api/agent';
 import { RootStore } from './rootStore';
@@ -8,15 +14,17 @@ export default class UserStore {
   constructor(private rootStore: RootStore) {
     makeObservable(this, {
       user: observable,
+      loading: observable,
       isLoggedIn: computed,
       login: action,
       register: action,
       getUser: action,
-      logout: action
+      logout: action,
     });
   }
 
   user: User | null = null;
+  loading: boolean = false;
 
   get isLoggedIn() {
     return !!this.user;
@@ -62,5 +70,18 @@ export default class UserStore {
     this.rootStore.commonStore.setToken(null);
     this.user = null;
     history.push('/');
+  };
+
+  facebookLogin = (response: any) => {
+    this.loading = true;
+    agent.User.facebookLogin(response.accessToken)
+      .then((user) => runInAction(() => {
+        this.user = user;
+        this.rootStore.commonStore.setToken(user.token);
+        this.rootStore.modalStore.closeModal();
+        history.push('/activities');
+      }))
+      .catch((e) => console.error(e))
+      .finally(() => runInAction(() => this.loading = false));
   };
 }

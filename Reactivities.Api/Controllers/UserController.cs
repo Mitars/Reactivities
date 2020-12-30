@@ -17,6 +17,11 @@ namespace Reactivities.Api.Controllers
             await this.Mediator.Send(command);
 
         [AllowAnonymous]
+        [HttpPost("facebook")]
+        public async Task<ActionResult<ExternalLogin.Response>> FacebookLogin(ExternalLogin.Query command) =>
+            await this.Mediator.Send(command);
+
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<Register.Response>> Register(Register.Command command) =>
             await this.Mediator.Send(command);

@@ -92,6 +92,8 @@ const UserAgent = {
     requests.post('/user/login', user),
   register: (user: UserFormValues): Promise<User> =>
     requests.post('/user/register', user),
+  facebookLogin: (accessToken: string) =>
+    requests.post('/user/facebook', { accessToken }),
 };
 
 const Profiles = {
