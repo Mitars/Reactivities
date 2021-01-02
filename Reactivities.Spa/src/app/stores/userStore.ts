@@ -50,11 +50,9 @@ export default class UserStore {
 
   register = async (values: UserFormValues) => {
     try {
-      const user = await agent.User.register(values);
-      this.rootStore.commonStore.setToken(user.token);
-      this.startRefreshTokenTimer(user);
+      await agent.User.register(values);
       this.rootStore.modalStore.closeModal();
-      history.push('/activities');
+      history.push(`/user/registerSuccess?email=${values.email}`);
     } catch (error) {
       throw error;
     }
@@ -83,32 +81,34 @@ export default class UserStore {
   facebookLogin = (response: any) => {
     this.loading = true;
     agent.User.facebookLogin(response.accessToken)
-      .then((user) => runInAction(() => {
-        this.user = user;
-        this.rootStore.commonStore.setToken(user.token);
-        this.startRefreshTokenTimer(user);
-        this.rootStore.modalStore.closeModal();
-        history.push('/activities');
-      }))
+      .then((user) =>
+        runInAction(() => {
+          this.user = user;
+          this.rootStore.commonStore.setToken(user.token);
+          this.startRefreshTokenTimer(user);
+          this.rootStore.modalStore.closeModal();
+          history.push('/activities');
+        })
+      )
       .catch((e) => console.error(e))
-      .finally(() => runInAction(() => this.loading = false));
+      .finally(() => runInAction(() => (this.loading = false)));
   };
 
   refreshToken = () => {
     this.stopRefreshTokenTimer();
     agent.User.refreshToken()
-    .then((user) => {
-      runInAction(() => this.user = user);
-      this.rootStore.commonStore.setToken(user.token);
-      this.startRefreshTokenTimer(user);
-    })
-    .catch((e) => console.error(e));
-  }
+      .then((user) => {
+        runInAction(() => (this.user = user));
+        this.rootStore.commonStore.setToken(user.token);
+        this.startRefreshTokenTimer(user);
+      })
+      .catch((e) => console.error(e));
+  };
 
   private startRefreshTokenTimer(user: User) {
     const jwtToken = JSON.parse(atob(user.token.split('.')[1]));
     const expires = new Date(jwtToken.exp * 1_000);
-    const timeout = expires.getTime() - Date.now() - (60 * 1_000);
+    const timeout = expires.getTime() - Date.now() - 60 * 1_000;
     this.refreshTokenTimeout = setTimeout(this.refreshToken, timeout);
   }
 

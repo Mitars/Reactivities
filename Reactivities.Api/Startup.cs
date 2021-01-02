@@ -22,6 +22,7 @@ using Reactivities.Application.Activities;
 using Reactivities.Application.Interfaces;
 using Reactivities.Application.Profiles;
 using Reactivities.Domain;
+using Reactivities.Infrastructure.Email;
 using Reactivities.Infrastructure.Photos;
 using Reactivities.Infrastructure.Security;
 using Reactivities.Persistence;
@@ -72,10 +73,13 @@ namespace Reactivities.Api
             })
                 .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Create>());
 
-            var builder = services.AddIdentityCore<AppUser>();
+            var builder = services.AddIdentityCore<AppUser>(options => {
+                options.SignIn.RequireConfirmedEmail = true;
+            });
             new IdentityBuilder(builder.UserType, builder.Services)
                 .AddEntityFrameworkStores<DataContext>()
-                .AddSignInManager<SignInManager<AppUser>>();
+                .AddSignInManager<SignInManager<AppUser>>()
+                .AddDefaultTokenProviders();
 
             services.AddAuthorization(opt =>
             {
@@ -116,8 +120,10 @@ namespace Reactivities.Api
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.AddScoped<IProfileReader, ProfileReader>();
             services.AddScoped<IFacebookAccessor, FacebookAccessor>();
+            services.AddScoped<IEmailSender, EmailSender>();
             services.Configure<CloudinarySettings>(this.Configuration.GetSection("Cloudinary"));
             services.Configure<FacebookAppSettings>(this.Configuration.GetSection("Authentication:Facebook"));
+            services.Configure<SendGridSettings>(this.Configuration.GetSection("SendGrid"));
 
             services.AddSwaggerGen(c =>
             {

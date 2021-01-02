@@ -94,7 +94,11 @@ const UserAgent = {
     requests.post('/user/register', user),
   facebookLogin: (accessToken: string) =>
     requests.post('/user/facebook', { accessToken }),
-  refreshToken: (): Promise<User> => requests.post('/user/refreshToken', {})
+  refreshToken: (): Promise<User> => requests.post('/user/refreshToken', {}),
+  verifyEmail: (token: string, email: string): Promise<User> =>
+    requests.post('/user/verifyEmail', { token, email }),
+  resendEmailVerification: (email: string): Promise<void> =>
+    requests.get(`/user/resendEmailVerification?email=${email}`),
 };
 
 const Profiles = {

@@ -19,6 +19,8 @@ import { LoadingComponent } from './LoadingComponent';
 import ModalContainer from '../common/modal/ModalContainer';
 import ProfilePage from '../../features/profiles/ProfilePage';
 import PrivateRoute from './PrivateRoute';
+import VerifyEmail from '../../features/user/VerifyEmail';
+import RegisterSuccess from '../../features/user/RegisterSuccess';
 
 const App = ({ location }: RouteComponentProps) => {
   const rootStore = useContext(RootStoreContext);
@@ -67,6 +69,11 @@ const App = ({ location }: RouteComponentProps) => {
                   path="/profile/:username"
                   component={ProfilePage}
                 />
+                <Route
+                  path="/user/registerSuccess"
+                  component={RegisterSuccess}
+                />
+                <Route path="/user/VerifyEmail" component={VerifyEmail} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

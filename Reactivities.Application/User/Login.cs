@@ -49,6 +49,11 @@ namespace Reactivities.Application.User
                     throw new RestException(HttpStatusCode.Unauthorized);
                 }
 
+                if (!user.EmailConfirmed)
+                {
+                    throw new RestException(HttpStatusCode.BadRequest, new { Email = "Email is not confirmed" });
+                }
+
                 var result = await this.signInManager.CheckPasswordSignInAsync(user, request.Password, false);
                 if (!result.Succeeded)
                 {
