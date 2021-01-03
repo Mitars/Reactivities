@@ -34,7 +34,11 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-      
+        
+      - name: List the yarn project directory
+        run: |
+          ls
+    
       - name: Yarn CLI
         uses: CultureHQ/actions-yarn@v1.0.1
       
