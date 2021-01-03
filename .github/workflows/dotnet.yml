@@ -13,13 +13,39 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: CultureHQ/actions-yarn@v1.0.1
+
+    - name: Build Reactivities.Spa
+      run: |
+        cd Reactivities.Spa
+        yarn
+        yarn build-linux
+        
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.101
+    
     - name: Restore dependencies
       run: dotnet restore
+    
     - name: Build
       run: dotnet build --no-restore
+    
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    
+    - name: Publish
+      run: dotnet publish -c Release -o publish --self-contained false Reactivities.sln
+
+    - name: Deploy DigitalOcean
+      uses: SamKirkland/FTP-Deploy-Action@2.0.0
+      env:
+        FTP_SERVER: ${{ secrets.DIGITALOCEAN_HOST }}
+        FTP_USERNAME: ${{ secrets.DIGITALOCEAN_USER }}
+        FTP_PASSWORD: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+        LOCAL_DIR: publish
+        METHOD: sftp
+        PORT: 22
+        ARGS: --delete
+     
