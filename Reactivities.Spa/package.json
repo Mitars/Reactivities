@@ -43,8 +43,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "postbuild": "move build ../Reactivities.Api/wwwroot",
+    "build-windows": "react-scripts build",
+    "build-linux": "react-scripts build",
+    "postbuild-windows": "move build ../Reactivities.Api/wwwroot",
+    "postbuild-linux": "mv build ../Reactivities.Api/wwwroot",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
