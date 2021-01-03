@@ -41,7 +41,7 @@ jobs:
         run: |
           cd Reactivities.Spa
           yarn
-          yarn build
+          yarn build-linux
         
       - name: List the yarn project directory
         run: |
