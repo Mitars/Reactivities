@@ -11,7 +11,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    steps:          
+    steps:
+    - name: Run a one-line script
+      run: echo $CANDY_SECURE
+      env:
+        CANDY_SECURE: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+        
     - name: TEST ACTION ONE
       uses: appleboy/ssh-action@master
       env:
