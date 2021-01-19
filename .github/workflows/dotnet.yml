@@ -11,18 +11,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Run a one-line script
-      run: echo Hello, world!
-    
-    - name: Run a one-line script
-      env:
-        SECRETS_PROPERTIES: ${{ secrets.DIGITALOCEAN_PASSWORD }}
-      run: echo "$SECRETS_PROPERTIES" | base64 -d > ./secrets.properties
-          
+    steps:          
     - name: TEST ACTION ONE
       uses: appleboy/ssh-action@master
-      with:
+      env:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
         username: ${{ secrets.DIGITALOCEAN_USER }}
         password: ${{ secrets.DIGITALOCEAN_PASSWORD }}
