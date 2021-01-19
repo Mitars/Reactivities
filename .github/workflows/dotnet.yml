@@ -12,36 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Run a one-line script
-      run: |
-        echo $CANDY_SECURE
-      env:
-        CANDY_SECURE: ${{ secrets.SDFSAD }}
-        
     - name: TEST ACTION ONE
       uses: appleboy/ssh-action@master
-      env:
+      with:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
         username: ${{ secrets.DIGITALOCEAN_USER }}
         password: ${{ secrets.DIGITALOCEAN_PASSWORD }}
         script: whoami
-        
-    - name: Copy file via scp
-      uses: appleboy/scp-action@master
-      env:
-        HOST: ${{ secrets.DIGITALOCEAN_HOST }}
-        USERNAME: ${{ secrets.DIGITALOCEAN_USER }}
-        PORT: 22
-        KEY: ${{ secrets.DIGITALOCEAN_PASSWORD }}
-      with:
-        source: "publish/**"
-        target: "/var/reactivities"
-
-    - name: Executing remote  command
-      uses: appleboy/ssh-action@v0.1.4
-      with:
-        host: ${{ secrets.DIGITALOCEAN_HOST }}
-        port: 22
-        username: ${{ secrets.DIGITALOCEAN_USER }}
-        password: ${{ secrets.DIGITALOCEAN_PASSWORD }}
-        script: cat /opt/app/README.md
