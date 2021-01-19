@@ -1,4 +1,4 @@
-name: .NET
+name: CI/CD
 
 on:
   push:
@@ -39,11 +39,12 @@ jobs:
       run: dotnet publish -c Release -o publish --self-contained false Reactivities.sln
 
     - name: Deploy DigitalOcean
-      uses: wlixcc/SFTP-Deploy-Action@1.1
-      with:
-        username: ${{ secrets.DIGITALOCEAN_USER }}
-        server: ${{ secrets.DIGITALOCEAN_HOST }}
-        port: 22
-        ssh_private_key: ${{ secrets.DIGITALOCEAN_PASSWORD }}
-        local_path: ./publish/*
-        remote_path: /var/reactivities
+      uses: SamKirkland/FTP-Deploy-Action@2.0.0
+      env:
+        FTP_SERVER: ${{ secrets.DIGITALOCEAN_HOST }}
+        FTP_USERNAME: ${{ secrets.DIGITALOCEAN_USER }}
+        FTP_PASSWORD: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+        LOCAL_DIR: build
+        METHOD: sftp
+        PORT: 22
+        ARGS: --delete
