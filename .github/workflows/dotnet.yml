@@ -13,14 +13,13 @@ jobs:
 
     steps:
     - name: TEST ACTION ONE
-      uses: appleboy/ssh-action@v0.1.4
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
-        port: 22
         username: ${{ secrets.DIGITALOCEAN_USER }}
         password: ${{ secrets.DIGITALOCEAN_PASSWORD }}
-        script: cat /opt/app/README.md
-
+        script: whoami
+        
     - name: Copy file via scp
       uses: appleboy/scp-action@master
       env:
