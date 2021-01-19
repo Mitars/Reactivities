@@ -13,9 +13,10 @@ jobs:
 
     steps:
     - name: Run a one-line script
-      run: echo $CANDY_SECURE
+      run: |
+        echo $CANDY_SECURE
       env:
-        CANDY_SECURE: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+        CANDY_SECURE: ${{ secrets.SDFSAD }}
         
     - name: TEST ACTION ONE
       uses: appleboy/ssh-action@master
