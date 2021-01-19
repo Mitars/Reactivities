@@ -16,7 +16,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
-        username: testu
+        username: ${{ secrets.DIGITALOCEAN_USER }}
         password: testp
         script: whoami
         
