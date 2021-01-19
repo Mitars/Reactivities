@@ -38,13 +38,31 @@ jobs:
     - name: Publish
       run: dotnet publish -c Release -o publish --self-contained false Reactivities.sln
 
-    - name: Deploy DigitalOcean
-      uses: SamKirkland/FTP-Deploy-Action@2.0.0
-      env:
-        FTP_SERVER: ${{ secrets.DIGITALOCEAN_HOST }}
-        FTP_USERNAME: ${{ secrets.DIGITALOCEAN_USER }}
-        FTP_PASSWORD: ${{ secrets.DIGITALOCEAN_PASSWORD }}
-        LOCAL_DIR: build
-        METHOD: sftp
+    - name: Executing remote  command
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DIGITALOCEAN_HOST }}
+        USERNAME: ${{ secrets.DIGITALOCEAN_USER }}
         PORT: 22
-        ARGS: --delete
+        KEY: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+        script: cat /opt/app/README.md
+
+    - name: Copy file via scp
+      uses: appleboy/scp-action@master
+      env:
+        HOST: ${{ secrets.DIGITALOCEAN_HOST }}
+        USERNAME: ${{ secrets.DIGITALOCEAN_USER }}
+        PORT: ${{ secrets.PORT }}
+        KEY: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+      with:
+        source: "publish/**"
+        target: "/var/reactivities"
+
+    - name: Executing remote  command
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DIGITALOCEAN_HOST }}
+        USERNAME: ${{ secrets.DIGITALOCEAN_USER }}
+        PORT: 22
+        KEY: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+        script: cat /opt/app/README.md
