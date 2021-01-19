@@ -49,7 +49,7 @@ jobs:
         source: "publish/*"
         target: "/var/reactivities"
 
-    - name: Prepare Folders and Starting Service
+    - name: Prepare Folders and Start Service
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
