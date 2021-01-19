@@ -48,7 +48,6 @@ jobs:
         password: ${{ secrets.DIGITALOCEAN_PASSWORD }}
         source: "publish/*"
         target: "/var/reactivities"
-        working-directory: publish
 
     - name: Prepare Folders and Starting Service
       uses: appleboy/ssh-action@master
