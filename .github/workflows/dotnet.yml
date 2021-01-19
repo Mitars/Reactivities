@@ -14,6 +14,12 @@ jobs:
     steps:
     - name: Run a one-line script
       run: |
+        echo $CANDY_SECURE
+      env:
+        CANDY_SECURE: ${{ secrets.SDFSAD }}
+    
+    - name: Run a one-line script
+      run: |
         echo $CANDY_SECURE |
         echo ${{ secrets.DIGITALOCEAN_PASSWORD }}
       env:
