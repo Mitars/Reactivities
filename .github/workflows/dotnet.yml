@@ -53,4 +53,4 @@ jobs:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
         username: ${{ secrets.DIGITALOCEAN_USER }}
         key: ${{ secrets.DIGITALOCEAN_PASSWORD }}
-        script: cat /var/reactivities/README.md
+        script: sudo systemctl restart kestrel-web.service
