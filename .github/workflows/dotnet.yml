@@ -44,7 +44,7 @@ jobs:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
         username: ${{ secrets.DIGITALOCEAN_USER }}
         password: ${{ secrets.DIGITALOCEAN_PASSWORD }}
-        source: "publish/**"
+        source: "publish/*"
         target: "/var/reactivities"
 
     - name: Executing remote  command
