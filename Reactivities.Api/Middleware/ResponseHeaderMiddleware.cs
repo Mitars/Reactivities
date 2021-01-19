@@ -21,7 +21,7 @@ namespace Reactivities.Api.Middleware
                 .Append("form-action 'self';")
                 .Append("frame-ancestors 'self';")
                 .Append("img-src 'self' https://res.cloudinary.com data: blob:;")
-                .Append($"script-src 'self' 'sha256-uSE6wZK79ac9dp/vledp4pXmIVW3QpEYGeScfy6MhnY=';")
+                .Append($"script-src 'self' 'sha256-uSE6wZK79ac9dp/vledp4pXmIVW3QpEYGeScfy6MhnY=' 'sha256-rmPzuTgq1ESh5M2NbjxubD7q+sQYBgY660mouzJfn4Q=';")
                 .ToString();
 
             context.Response.Headers["Content-Security-Policy"] = contentSecurityPolicy;
