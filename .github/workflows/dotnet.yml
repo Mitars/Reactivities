@@ -12,35 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: CultureHQ/actions-yarn@v1.0.1
-
-    - name: Build Reactivities.Spa
-      run: |
-        cd Reactivities.Spa
-        yarn
-        yarn build-linux
-        
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.101
-    
-    - name: Restore dependencies
-      run: dotnet restore
-    
-    - name: Build
-      run: dotnet build --no-restore
-    
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-    
-    - name: Publish
-      run: dotnet publish -c Release -o publish --self-contained false Reactivities.sln
-
     - name: Executing remote  command
       uses: appleboy/ssh-action@master
-      with:
+      env:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
         USERNAME: ${{ secrets.DIGITALOCEAN_USER }}
         PORT: 22
@@ -60,7 +34,7 @@ jobs:
 
     - name: Executing remote  command
       uses: appleboy/ssh-action@master
-      with:
+      env:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
         USERNAME: ${{ secrets.DIGITALOCEAN_USER }}
         PORT: 22
