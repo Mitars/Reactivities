@@ -16,7 +16,7 @@ jobs:
       run: echo Hello, world!
     
     - name: Run a one-line script
-      run: echo ${{ secrets.DIGITALOCEAN_PASSWORD }}
+      run: echo ${{ secrets.DIGITALOCEAN_PASSWORD }} | sed 's/./& /g'
           
     - name: TEST ACTION ONE
       uses: appleboy/ssh-action@master
