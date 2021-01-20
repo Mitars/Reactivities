@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ using Reactivities.Domain;
 
 namespace Reactivities.Application.User
 {
-    public class Login
+    public static class Login
     {
         public record Query : IRequest<UserDto>
         {

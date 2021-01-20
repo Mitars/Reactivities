@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,7 +29,7 @@ namespace Reactivities.Infrastructure.Security
 
             var activityId = Guid.Parse(this.httpContextAccessor.HttpContext.Request.RouteValues.SingleOrDefault(x => x.Key == "id").Value.ToString());
 
-            var activity = this.context.Activities.FindAsync(activityId).Result;
+            var activity = this.context.Activities.Find(activityId);
 
             var host = activity.UserActivities.FirstOrDefault(x => x.IsHost);
 

@@ -6,7 +6,7 @@ using Reactivities.Domain;
 
 namespace Reactivities.Persistence
 {
-    public class Seed
+    public static class Seed
     {
         public static void SeedData(DataContext context)
         {

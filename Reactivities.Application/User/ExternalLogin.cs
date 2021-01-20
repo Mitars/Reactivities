@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,9 +9,10 @@ using Reactivities.Domain;
 
 namespace Reactivities.Application.User
 {
-    public class ExternalLogin
+    public static class ExternalLogin
     {
-        public record Query : IRequest<UserDto> {
+        public record Query : IRequest<UserDto>
+        {
             public string AccessToken { get; init; }
         }
 
@@ -35,7 +35,7 @@ namespace Reactivities.Application.User
 
                 if (userInfo == null)
                 {
-                    throw new RestException(HttpStatusCode.BadRequest, new { User = "Problem validating token"});
+                    throw new RestException(HttpStatusCode.BadRequest, new { User = "Problem validating token" });
                 }
 
                 var user = await this.userManager.FindByEmailAsync(userInfo.Email);
@@ -64,7 +64,7 @@ namespace Reactivities.Application.User
 
                     if (!result.Succeeded)
                     {
-                        throw new RestException(HttpStatusCode.BadRequest, new { User = "Problem creating user"});
+                        throw new RestException(HttpStatusCode.BadRequest, new { User = "Problem creating user" });
                     }
                 }
 

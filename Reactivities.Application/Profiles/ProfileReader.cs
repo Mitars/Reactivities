@@ -23,7 +23,7 @@ namespace Reactivities.Application.Profiles
         {
             var user = await this.context.Users.SingleOrDefaultAsync(u => u.UserName == username);
 
-            if(user == null)
+            if (user == null)
             {
                 throw new RestException(HttpStatusCode.BadRequest, new { User = "Not found" });
             }
@@ -37,8 +37,8 @@ namespace Reactivities.Application.Profiles
                 Image = user.Photos.FirstOrDefault(photo => photo.IsMain)?.Url,
                 Photos = user.Photos,
                 Bio = user.Bio,
-                FollowersCount = user.Followers.Count(),
-                FollowingCount = user.Followings.Count(),
+                FollowersCount = user.Followers.Count,
+                FollowingCount = user.Followings.Count,
                 IsFollowed = currentUser.Followings.Any(u => u.Id == user.Id)
             };
         }

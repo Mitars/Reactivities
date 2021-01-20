@@ -11,7 +11,7 @@ namespace Reactivities.Infrastructure.Photos
     public class PhotoAccessor : IPhotoAccessor
     {
         private readonly Cloudinary cloudinary;
-        
+
         public PhotoAccessor(IOptions<CloudinarySettings> config)
         {
             var account = new Account(

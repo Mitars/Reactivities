@@ -11,7 +11,7 @@ using Reactivities.Persistence;
 
 namespace Reactivities.Application.Followers
 {
-    public class Add
+    public static class Add
     {
         public record Command : IRequest
         {
@@ -34,8 +34,8 @@ namespace Reactivities.Application.Followers
                 var currentUser = await this.context.Users
                     .Include(u => u.Followings)
                     .Include(u => u.Followers)
-                    .SingleOrDefaultAsync(u => u.UserName == this.userAccessor.GetCurrentUserName());
-                var targetUser = await this.context.Users.SingleOrDefaultAsync(u => u.UserName == request.Username);
+                    .SingleOrDefaultAsync(u => u.UserName == this.userAccessor.GetCurrentUserName(), cancellationToken);
+                var targetUser = await this.context.Users.SingleOrDefaultAsync(u => u.UserName == request.Username, cancellationToken);
 
                 if (targetUser == null)
                 {
@@ -49,7 +49,7 @@ namespace Reactivities.Application.Followers
 
                 currentUser.Followings.Add(targetUser);
 
-                var success = await this.context.SaveChangesAsync() > 0;
+                var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
 
                 if (success) return Unit.Value;
 

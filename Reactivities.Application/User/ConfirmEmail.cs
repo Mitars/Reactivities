@@ -9,7 +9,7 @@ using Reactivities.Domain;
 
 namespace Reactivities.Application.User
 {
-    public class ConfirmEmail
+    public static class ConfirmEmail
     {
         public record Command : IRequest<IdentityResult>
         {

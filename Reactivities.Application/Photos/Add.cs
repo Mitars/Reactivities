@@ -11,7 +11,7 @@ using Reactivities.Persistence;
 
 namespace Reactivities.Application.Photos
 {
-    public class Add
+    public static class Add
     {
         public record Command : IRequest<Photo>
         {
@@ -35,7 +35,7 @@ namespace Reactivities.Application.Photos
             {
                 var photoUploadResult = this.photoAccessor.AddPhoto(request.File);
 
-                var user = await this.context.Users.SingleOrDefaultAsync(user => user.UserName == this.userAccessor.GetCurrentUserName());
+                var user = await this.context.Users.SingleOrDefaultAsync(user => user.UserName == this.userAccessor.GetCurrentUserName(), cancellationToken);
 
                 var photo = new Photo
                 {
@@ -50,7 +50,7 @@ namespace Reactivities.Application.Photos
 
                 user.Photos.Add(photo);
 
-                var success = await this.context.SaveChangesAsync() > 0;
+                var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
 
                 if (success)
                 {

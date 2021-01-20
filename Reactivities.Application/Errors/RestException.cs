@@ -11,6 +11,21 @@ namespace Reactivities.Application.Errors
             this.Errors = Errors;
         }
 
+        public RestException()
+        {
+            this.Errors = HttpStatusCode.InternalServerError;
+        }
+
+        public RestException(string message) : base(message)
+        {
+            this.Errors = HttpStatusCode.InternalServerError;
+        }
+
+        public RestException(string message, Exception innerException) : base(message, innerException)
+        {
+            this.Errors = HttpStatusCode.InternalServerError;
+        }
+
         public HttpStatusCode Code { get; }
         public object Errors { get; }
     }

@@ -11,7 +11,7 @@ using Reactivities.Domain;
 
 namespace Reactivities.Application.User
 {
-    public class RefreshToken
+    public static class RefreshToken
     {
         public record Command : IRequest<UserDto>
         {
@@ -35,12 +35,12 @@ namespace Reactivities.Application.User
                 var user = await this.userManager.FindByNameAsync(this.userAccessor.GetCurrentUserName());
                 var oldToken = user.RefreshTokens.SingleOrDefault(t => t.Token == request.RefreshToken);
 
-                if (oldToken != null && !oldToken.IsActive)
+                if (oldToken?.IsActive == false)
                 {
                     throw new RestException(HttpStatusCode.Unauthorized);
                 }
 
-                if (oldToken != null) 
+                if (oldToken != null)
                 {
                     oldToken.Revoked = DateTime.UtcNow;
                 }

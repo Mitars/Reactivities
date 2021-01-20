@@ -8,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Reactivities.Application.Errors;
 using Reactivities.Domain;
 using Reactivities.Persistence;
+using Reactivities.Persistence.Helpers;
 
 namespace Reactivities.Application.Comments
 {
-    public class Create
+    public static class Create
     {
         public record Command : IRequest<CommentDto>
         {
@@ -33,13 +34,13 @@ namespace Reactivities.Application.Comments
 
             public async Task<CommentDto> Handle(Command request, CancellationToken cancellationToken)
             {
-                var activity = await this.context.Activities.FindAsync(request.ActivityId);
+                var activity = await context.Activities.FindByIdAsync(request.ActivityId, cancellationToken);
                 if (activity == null)
                 {
                     throw new RestException(HttpStatusCode.NotFound, new { Activity = "Not Found" });
                 }
 
-                var user = await this.context.Users.SingleOrDefaultAsync(x => x.UserName == request.Username);
+                var user = await this.context.Users.SingleOrDefaultAsync(x => x.UserName == request.Username, cancellationToken);
 
                 var comment = new Comment
                 {
@@ -51,7 +52,7 @@ namespace Reactivities.Application.Comments
 
                 activity.Comments.Add(comment);
 
-                var success = await this.context.SaveChangesAsync() > 0;
+                var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
 
                 if (success) return this.mapper.Map<CommentDto>(comment);
 

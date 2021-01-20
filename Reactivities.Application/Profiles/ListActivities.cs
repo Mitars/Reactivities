@@ -12,7 +12,7 @@ using Reactivities.Domain;
 
 namespace Reactivities.Application.Profiles
 {
-    public class ListActivities
+    public static class ListActivities
     {
         public record Query : IRequest<List<UserActivityDto>>
         {
@@ -31,7 +31,7 @@ namespace Reactivities.Application.Profiles
             public async Task<List<UserActivityDto>> Handle(Query request,
                 CancellationToken cancellationToken)
             {
-                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == request.Username);
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == request.Username, cancellationToken);
 
                 if (user == null)
                 {
@@ -52,13 +52,13 @@ namespace Reactivities.Application.Profiles
                     .OrderBy(a => a.Activity.Date).AsQueryable()
                     .Where(filterAction)
                     .ToList()
-                    .Select(activity => new UserActivityDto
+                    .ConvertAll(activity => new UserActivityDto
                     {
                         Id = activity.Activity.Id,
                         Title = activity.Activity.Title,
                         Category = activity.Activity.Category,
                         Date = activity.Activity.Date
-                    }).ToList();
+                    });
             }
         }
     }
