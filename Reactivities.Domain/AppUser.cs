@@ -13,10 +13,10 @@ namespace Reactivities.Domain
 
         public string DisplayName { get; set; }
         public string Bio { get; set; }
-        public virtual ICollection<UserActivity> UserActivities { get; set; }
-        public virtual ICollection<Photo> Photos { get; set; }
-        public virtual ICollection<AppUser> Followings { get; set; }
-        public virtual ICollection<AppUser> Followers { get; set; }
-        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+        public virtual ICollection<UserActivity> UserActivities { get; init; }
+        public virtual ICollection<Photo> Photos { get; init; }
+        public virtual ICollection<AppUser> Followings { get; init; }
+        public virtual ICollection<AppUser> Followers { get; init; }
+        public virtual ICollection<RefreshToken> RefreshTokens { get; init; }
     }
 }

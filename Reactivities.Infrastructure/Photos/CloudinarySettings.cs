@@ -1,9 +1,9 @@
 namespace Reactivities.Infrastructure.Photos
 {
-    public class CloudinarySettings
+    public record CloudinarySettings
     {
-        public string CloudName { get; set; }
-        public string ApiKey { get; set; }
-        public string ApiSecret { get; set; }
+        public string CloudName { get; init; }
+        public string ApiKey { get; init; }
+        public string ApiSecret { get; init; }
     }
 }

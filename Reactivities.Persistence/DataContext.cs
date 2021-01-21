@@ -21,10 +21,10 @@ namespace Reactivities.Persistence
             }
         }
 
-        public DbSet<Activity> Activities { get; set; }
-        public DbSet<UserActivity> UserActivities { get; set; }
-        public DbSet<Photo> Photos { get; set; }
-        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Activity> Activities { get; init; }
+        public DbSet<UserActivity> UserActivities { get; init; }
+        public DbSet<Photo> Photos { get; init; }
+        public DbSet<Comment> Comments { get; init; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

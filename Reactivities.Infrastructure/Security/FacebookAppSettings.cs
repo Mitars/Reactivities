@@ -1,8 +1,8 @@
 namespace Reactivities.Infrastructure.Security
 {
-    public class FacebookAppSettings
+    public record FacebookAppSettings
     {
-        public string AppId { get; set; }
-        public string AppSecret { get; set; }
+        public string AppId { get; init; }
+        public string AppSecret { get; init; }
     }
 }

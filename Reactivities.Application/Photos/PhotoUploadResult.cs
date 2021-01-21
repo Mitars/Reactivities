@@ -1,8 +1,8 @@
 namespace Reactivities.Application.Photos
 {
-    public class PhotoUploadResult
+    public record PhotoUploadResult
     {
-        public string PublicId { get; set; }
-        public string Url { get; set; }
+        public string PublicId { get; init; }
+        public string Url { get; init; }
     }
 }

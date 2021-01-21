@@ -61,11 +61,13 @@ namespace Reactivities.Persistence
                         Category = "Drinks",
                         City = "London",
                         Venue = "Pub",
-                        UserActivities = new List<UserActivity> {
-                            new UserActivity {
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
                                 AppUserId = "a",
-                                    IsHost = true,
-                                    DateJoined = DateTime.Now.AddMonths (-2)
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths (-2)
                             }
                         }
                     },
@@ -77,16 +79,19 @@ namespace Reactivities.Persistence
                         Category = "Culture",
                         City = "Paris",
                         Venue = "The Louvre",
-                        UserActivities = new List<UserActivity> {
-                            new UserActivity {
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
                                 AppUserId = "b",
-                                    IsHost = true,
-                                    DateJoined = DateTime.Now.AddMonths (-1)
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths (-1)
                             },
-                            new UserActivity {
+                            new UserActivity
+                            {
                                 AppUserId = "a",
-                                    IsHost = false,
-                                    DateJoined = DateTime.Now.AddMonths (-1)
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths (-1)
                             },
                         }
                     },
@@ -99,15 +104,17 @@ namespace Reactivities.Persistence
                         City = "London",
                         Venue = "Wembly Stadium",
                         UserActivities = new List<UserActivity> {
-                            new UserActivity {
+                            new UserActivity
+                            {
                                 AppUserId = "b",
-                                    IsHost = true,
-                                    DateJoined = DateTime.Now.AddMonths (1)
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths (1)
                             },
-                            new UserActivity {
+                            new UserActivity
+                            {
                                 AppUserId = "a",
-                                    IsHost = false,
-                                    DateJoined = DateTime.Now.AddMonths (1)
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths (1)
                             },
                         }
                     },
@@ -119,16 +126,19 @@ namespace Reactivities.Persistence
                         Category = "Food",
                         City = "London",
                         Venue = "Jamies Italian",
-                        UserActivities = new List<UserActivity> {
-                            new UserActivity {
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
                                 AppUserId = "c",
-                                    IsHost = true,
-                                    DateJoined = DateTime.Now.AddMonths (2)
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths (2)
                             },
-                            new UserActivity {
+                            new UserActivity
+                            {
                                 AppUserId = "a",
-                                    IsHost = false,
-                                    DateJoined = DateTime.Now.AddMonths (2)
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths (2)
                             },
                         }
                     },
@@ -141,15 +151,17 @@ namespace Reactivities.Persistence
                         City = "London",
                         Venue = "Pub",
                         UserActivities = new List<UserActivity> {
-                            new UserActivity {
+                            new UserActivity
+                            {
                                 AppUserId = "b",
-                                    IsHost = true,
-                                    DateJoined = DateTime.Now.AddMonths (3)
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths (3)
                             },
-                            new UserActivity {
+                            new UserActivity
+                            {
                                 AppUserId = "c",
-                                    IsHost = false,
-                                    DateJoined = DateTime.Now.AddMonths (3)
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths (3)
                             },
                         }
                     },
@@ -161,11 +173,13 @@ namespace Reactivities.Persistence
                         Category = "Culture",
                         City = "London",
                         Venue = "British Museum",
-                        UserActivities = new List<UserActivity> {
-                            new UserActivity {
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
                                 AppUserId = "a",
-                                    IsHost = true,
-                                    DateJoined = DateTime.Now.AddMonths (4)
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths (4)
                             }
                         }
                     },
@@ -177,16 +191,19 @@ namespace Reactivities.Persistence
                         Category = "Drinks",
                         City = "London",
                         Venue = "Punch and Judy",
-                        UserActivities = new List<UserActivity> {
-                            new UserActivity {
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
                                 AppUserId = "c",
-                                    IsHost = true,
-                                    DateJoined = DateTime.Now.AddMonths (5)
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths (5)
                             },
-                            new UserActivity {
+                            new UserActivity
+                            {
                                 AppUserId = "b",
-                                    IsHost = false,
-                                    DateJoined = DateTime.Now.AddMonths (5)
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths (5)
                             },
                         }
                     },
@@ -198,16 +215,19 @@ namespace Reactivities.Persistence
                         Category = "Music",
                         City = "London",
                         Venue = "O2 Arena",
-                        UserActivities = new List<UserActivity> {
-                            new UserActivity {
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
                                 AppUserId = "a",
-                                    IsHost = true,
-                                    DateJoined = DateTime.Now.AddMonths (6)
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths (6)
                             },
-                            new UserActivity {
+                            new UserActivity
+                            {
                                 AppUserId = "b",
-                                    IsHost = false,
-                                    DateJoined = DateTime.Now.AddMonths (6)
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths (6)
                             },
                         }
                     },
@@ -219,16 +239,19 @@ namespace Reactivities.Persistence
                         Category = "Travel",
                         City = "Berlin",
                         Venue = "All",
-                        UserActivities = new List<UserActivity> {
-                            new UserActivity {
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
                                 AppUserId = "a",
-                                    IsHost = true,
-                                    DateJoined = DateTime.Now.AddMonths (7)
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths (7)
                             },
-                            new UserActivity {
+                            new UserActivity
+                            {
                                 AppUserId = "c",
-                                    IsHost = false,
-                                    DateJoined = DateTime.Now.AddMonths (7)
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths (7)
                             },
                         }
                     },
@@ -240,16 +263,17 @@ namespace Reactivities.Persistence
                         Category = "Drinks",
                         City = "London",
                         Venue = "Pub",
-                        UserActivities = new List<UserActivity> {
+                        UserActivities = new List<UserActivity>
+                        {
                             new UserActivity {
                                 AppUserId = "b",
-                                    IsHost = true,
-                                    DateJoined = DateTime.Now.AddMonths (8)
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths (8)
                             },
                             new UserActivity {
                                 AppUserId = "a",
-                                    IsHost = false,
-                                    DateJoined = DateTime.Now.AddMonths (8)
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths (8)
                             },
                         }
                     }

@@ -15,7 +15,7 @@ namespace Reactivities.Application.Photos
     {
         public record Command : IRequest<Photo>
         {
-            public IFormFile File { get; set; }
+            public IFormFile File { get; init; }
         }
 
         public class Handler : IRequestHandler<Command, Photo>

@@ -1,8 +1,8 @@
 namespace Reactivities.Infrastructure.Email
 {
-    public class SendGridSettings
+    public record SendGridSettings
     {
-        public string User { get; set; }
-        public string Key { get; set; }
+        public string User { get; init; }
+        public string Key { get; init; }
     }
 }
