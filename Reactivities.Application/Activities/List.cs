@@ -12,7 +12,7 @@ using Reactivities.Persistence;
 
 namespace Reactivities.Application.Activities
 {
-    public class List
+    public static class List
     {
         public record Query : IRequest<Response>
         {
@@ -48,12 +48,12 @@ namespace Reactivities.Application.Activities
                 var activities = this.context.Activities
                     .Where(a => a.Date >= request.StartDate)
                     .OrderBy(a => a.Date)
-                    .Where(a => request.IsGoing ? a.UserActivities.Any(u => u.AppUser.UserName == currentUserName) : true)
-                    .Where(a => request.IsHost ? a.UserActivities.Any(u => u.AppUser.UserName == currentUserName && u.IsHost) : true);
+                    .Where(a => !request.IsGoing || a.UserActivities.Any(u => u.AppUser.UserName == currentUserName))
+                    .Where(a => !request.IsHost || a.UserActivities.Any(u => u.AppUser.UserName == currentUserName && u.IsHost));
 
-                var activitiesCount = await activities.CountAsync();
+                var activitiesCount = await activities.CountAsync(cancellationToken);
                 var activitiesFiltered = await activities.Skip(request.Offset ?? 0)
-                    .Take(request.Limit ?? 3).ToListAsync();
+                    .Take(request.Limit ?? 3).ToListAsync(cancellationToken);
 
                 return new Response
                 {

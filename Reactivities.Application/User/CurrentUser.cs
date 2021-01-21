@@ -7,7 +7,7 @@ using Reactivities.Domain;
 
 namespace Reactivities.Application.User
 {
-    public class CurrentUser
+    public static class CurrentUser
     {
         public record Query : IRequest<UserDto> { }
 

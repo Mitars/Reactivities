@@ -6,10 +6,11 @@ using FluentValidation;
 using MediatR;
 using Reactivities.Application.Errors;
 using Reactivities.Persistence;
+using Reactivities.Persistence.Helpers;
 
 namespace Reactivities.Application.Activities
 {
-    public class Edit
+    public static class Edit
     {
         public class Command : IRequest
         {
@@ -46,8 +47,7 @@ namespace Reactivities.Application.Activities
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var activity = await this.context.Activities.FindAsync(request.Id);
-
+                var activity = await context.Activities.FindByIdAsync(request.Id, cancellationToken);
                 if (activity == null)
                 {
                     throw new RestException(HttpStatusCode.NotFound, new { activity = "Not found" });
@@ -60,11 +60,13 @@ namespace Reactivities.Application.Activities
                 activity.City = request.City ?? activity.City;
                 activity.Venue = request.Venue ?? activity.Venue;
 
-                var success = await this.context.SaveChangesAsync() > 0;
+                var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
+                if (!success)
+                {
+                    throw new Exception("Problem saving changes");
+                }
 
-                if (success) return Unit.Value;
-
-                throw new Exception("Problem saving changes");
+                return Unit.Value;
             }
         }
     }

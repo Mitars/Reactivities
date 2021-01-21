@@ -11,7 +11,7 @@ using Reactivities.Persistence;
 
 namespace Reactivities.Application.Followers
 {
-    public class Delete
+    public static class Delete
     {
         public record Command : IRequest
         {
@@ -34,24 +34,26 @@ namespace Reactivities.Application.Followers
                 var currentUser = await this.context.Users
                     .Include(u => u.Followings)
                     .Include(u => u.Followers)
-                    .SingleOrDefaultAsync(u => u.UserName == this.userAccessor.GetCurrentUserName());
-                var targetUser = await this.context.Users.SingleOrDefaultAsync(u => u.UserName == request.Username);
-
-                if (targetUser == null) {
+                    .SingleOrDefaultAsync(u => u.UserName == this.userAccessor.GetCurrentUserName(), cancellationToken);
+                var targetUser = await this.context.Users.SingleOrDefaultAsync(u => u.UserName == request.Username, cancellationToken);
+                if (targetUser == null)
+                {
                     throw new RestException(HttpStatusCode.NotFound, new { User = "Not found" });
                 }
-
-                if (currentUser.Followings.All(u => u.Id != targetUser.Id)) {
+                else if (currentUser.Followings.All(u => u.Id != targetUser.Id))
+                {
                     throw new RestException(HttpStatusCode.BadRequest, new { User = "You are not following this user" });
                 }
 
                 currentUser.Followings.Remove(targetUser);
 
-                var success = await this.context.SaveChangesAsync() > 0;
+                var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
+                if (!success)
+                {
+                    throw new Exception("Problem saving changes");
+                }
 
-                if (success) return Unit.Value;
-
-                throw new Exception("Problem saving changes");
+                return Unit.Value;
             }
         }
     }

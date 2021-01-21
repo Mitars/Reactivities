@@ -7,10 +7,11 @@ using MediatR;
 using Reactivities.Application.Errors;
 using Reactivities.Domain;
 using Reactivities.Persistence;
+using Reactivities.Persistence.Helpers;
 
 namespace Reactivities.Application.Activities
 {
-    public class Details
+    public static class Details
     {
         public record Query : IRequest<ActivityDto>
         {
@@ -30,14 +31,13 @@ namespace Reactivities.Application.Activities
 
             public async Task<ActivityDto> Handle(Query request, CancellationToken cancellationToken)
             {
-                var activity = await this.context.Activities.FindAsync(request.Id);
-
+                var activity = await this.context.Activities.FindByIdAsync(request.Id, cancellationToken);
                 if (activity == null)
                 {
                     throw new RestException(HttpStatusCode.NotFound, new { activity = "Not found" });
                 }
 
-                return this.mapper.Map<Activity, ActivityDto>(activity); ;
+                return this.mapper.Map<Activity, ActivityDto>(activity);
             }
         }
     }

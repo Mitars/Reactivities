@@ -8,10 +8,11 @@ using Reactivities.Application.Errors;
 using Reactivities.Application.Interfaces;
 using Reactivities.Domain;
 using Reactivities.Persistence;
+using Reactivities.Persistence.Helpers;
 
 namespace Reactivities.Application.Activities
 {
-    public class Attend
+    public static class Attend
     {
         public record Command : IRequest
         {
@@ -31,16 +32,15 @@ namespace Reactivities.Application.Activities
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var activity = await this.context.Activities.FindAsync(request.Id);
+                var activity = await this.context.Activities.FindByIdAsync(request.Id, cancellationToken);
                 if (activity == null)
                 {
                     throw new RestException(HttpStatusCode.NotFound, new { Activity = "Could not find activity" });
                 }
 
-                var user = await this.context.Users.SingleOrDefaultAsync(u => u.UserName == this.userAccessor.GetCurrentUserName());
+                var user = await this.context.Users.SingleOrDefaultAsync(u => u.UserName == this.userAccessor.GetCurrentUserName(), cancellationToken);
 
-                var attendance = await this.context.UserActivities.SingleOrDefaultAsync(ua => ua.ActivityId == activity.Id && ua.AppUserId == user.Id);
-
+                var attendance = await this.context.UserActivities.SingleOrDefaultAsync(ua => ua.ActivityId == activity.Id && ua.AppUserId == user.Id, cancellationToken);
                 if (attendance != null)
                 {
                     throw new RestException(HttpStatusCode.BadRequest, new { Attendance = "Already attending this activity" });
@@ -56,14 +56,13 @@ namespace Reactivities.Application.Activities
 
                 this.context.UserActivities.Add(attendance);
 
-                var success = await this.context.SaveChangesAsync() > 0;
-
-                if (success)
+                var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
+                if (!success)
                 {
-                    return Unit.Value;
+                    throw new Exception("Problem saving changes");
                 }
 
-                throw new Exception("Problem saving changes");
+                return Unit.Value;
             }
         }
     }

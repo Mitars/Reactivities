@@ -6,8 +6,6 @@ namespace Reactivities.Application.Activities
         public string DisplayName { get; init; }
         public string Image { get; init; }
         public bool IsHost { get; init; }
-        public bool Following { get; set; }
-        
-        
+        public bool Following { get; init; }
     }
 }

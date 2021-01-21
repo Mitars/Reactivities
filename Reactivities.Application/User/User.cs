@@ -5,7 +5,7 @@ using Reactivities.Domain;
 
 namespace Reactivities.Application.User
 {
-    public class UserDto
+    public record UserDto
     {
         public UserDto(AppUser user, IJwtGenerator jwtGenerator, string refreshToken)
         {

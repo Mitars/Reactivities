@@ -10,7 +10,7 @@ using Reactivities.Persistence;
 
 namespace Reactivities.Application.Activities
 {
-    public class Create
+    public static class Create
     {
         public record Command : IRequest
         {
@@ -58,11 +58,9 @@ namespace Reactivities.Application.Activities
                     City = request.City,
                     Venue = request.Venue,
                 };
-
                 this.context.Activities.Add(activity);
 
-                var user = await this.context.Users.SingleOrDefaultAsync(user => user.UserName == this.userAccessor.GetCurrentUserName());
-
+                var user = await this.context.Users.SingleOrDefaultAsync(user => user.UserName == this.userAccessor.GetCurrentUserName(), cancellationToken);
                 var attendee = new UserActivity
                 {
                     AppUser = user,
@@ -73,11 +71,13 @@ namespace Reactivities.Application.Activities
 
                 this.context.UserActivities.Add(attendee);
 
-                var success = await this.context.SaveChangesAsync() > 0;
+                var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
+                if (!success)
+                {
+                    throw new Exception("Problem saving changes");
+                }
 
-                if (success) return Unit.Value;
-
-                throw new Exception("Problem saving changes");
+                return Unit.Value;
             }
         }
     }

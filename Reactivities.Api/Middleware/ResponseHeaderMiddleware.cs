@@ -16,12 +16,12 @@ namespace Reactivities.Api.Middleware
         {
             var contentSecurityPolicy = new StringBuilder()
                 .Append("block-all-mixed-content;")
-                .Append("style-src 'self' https://fonts.googleapis.com/;")
+                .Append("style-src 'self' https://fonts.googleapis.com/ 'sha256-wkAU1AW/h8YFx0XlzvpTllAKnFEO2tw8aKErs5a26LY=';")
                 .Append("font-src 'self' https://fonts.gstatic.com/ data:;")
                 .Append("form-action 'self';")
                 .Append("frame-ancestors 'self';")
                 .Append("img-src 'self' https://res.cloudinary.com data: blob:;")
-                .Append($"script-src 'self' 'sha256-uSE6wZK79ac9dp/vledp4pXmIVW3QpEYGeScfy6MhnY=' 'sha256-rmPzuTgq1ESh5M2NbjxubD7q+sQYBgY660mouzJfn4Q=';")
+                .Append("script-src 'self' 'sha256-uSE6wZK79ac9dp/vledp4pXmIVW3QpEYGeScfy6MhnY=' 'sha256-rmPzuTgq1ESh5M2NbjxubD7q+sQYBgY660mouzJfn4Q=' 'sha256-Tui7QoFlnLXkJCSl1/JvEZdIXTmBttnWNxzJpXomQjg=' 'sha256-JRz1/3X5iBvaty8nuXJ+IMllcFH+any3UGyhGRZ3i9g=' 'sha256-jhSY8gx6xQqltOsXobsXomDNSPOpQSuFg9wvBUvY+DI=';")
                 .ToString();
 
             context.Response.Headers["Content-Security-Policy"] = contentSecurityPolicy;

@@ -2,9 +2,9 @@ using System;
 
 namespace Reactivities.Domain
 {
-    public class UserActivity
+    public record UserActivity
     {
-        public string AppUserId { get; set; }
+        public string AppUserId { get; init; }
         public virtual AppUser AppUser { get; init; }
         public Guid ActivityId { get; init; }
         public virtual Activity Activity { get; init; }

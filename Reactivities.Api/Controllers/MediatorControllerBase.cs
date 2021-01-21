@@ -11,6 +11,6 @@ namespace Reactivities.Api.Controllers
         private IMediator mediator;
 
         protected IMediator Mediator =>
-            this.mediator ?? (this.mediator = HttpContext.RequestServices.GetService<IMediator>());
+            this.mediator ??= HttpContext.RequestServices.GetService<IMediator>();
     }
 }

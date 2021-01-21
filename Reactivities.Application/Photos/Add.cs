@@ -11,11 +11,11 @@ using Reactivities.Persistence;
 
 namespace Reactivities.Application.Photos
 {
-    public class Add
+    public static class Add
     {
         public record Command : IRequest<Photo>
         {
-            public IFormFile File { get; set; }
+            public IFormFile File { get; init; }
         }
 
         public class Handler : IRequestHandler<Command, Photo>
@@ -35,7 +35,7 @@ namespace Reactivities.Application.Photos
             {
                 var photoUploadResult = this.photoAccessor.AddPhoto(request.File);
 
-                var user = await this.context.Users.SingleOrDefaultAsync(user => user.UserName == this.userAccessor.GetCurrentUserName());
+                var user = await this.context.Users.SingleOrDefaultAsync(user => user.UserName == this.userAccessor.GetCurrentUserName(), cancellationToken);
 
                 var photo = new Photo
                 {
@@ -50,14 +50,13 @@ namespace Reactivities.Application.Photos
 
                 user.Photos.Add(photo);
 
-                var success = await this.context.SaveChangesAsync() > 0;
-
-                if (success)
+                var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
+                if (!success)
                 {
-                    return photo;
+                    throw new Exception("Problem saving changes");
                 }
 
-                throw new Exception("Problem saving changes");
+                return photo;
             }
         }
     }

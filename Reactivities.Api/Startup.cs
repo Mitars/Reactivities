@@ -67,24 +67,19 @@ namespace Reactivities.Api
             services.AddAutoMapper(typeof(List.Handler));
             services.AddSignalR();
             services.AddControllers(opt =>
-            {
-                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-                opt.Filters.Add(new AuthorizeFilter(policy));
-            })
-                .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Create>());
+                {
+                    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                    opt.Filters.Add(new AuthorizeFilter(policy));
+                })
+                .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Create.Command>());
 
-            var builder = services.AddIdentityCore<AppUser>(options => {
-                options.SignIn.RequireConfirmedEmail = true;
-            });
+            var builder = services.AddIdentityCore<AppUser>(options => options.SignIn.RequireConfirmedEmail = true);
             new IdentityBuilder(builder.UserType, builder.Services)
                 .AddEntityFrameworkStores<DataContext>()
                 .AddSignInManager<SignInManager<AppUser>>()
                 .AddDefaultTokenProviders();
 
-            services.AddAuthorization(opt =>
-            {
-                opt.AddPolicy("IsActivityHost", policy => policy.Requirements.Add(new IsHostRequirement()));
-            });
+            services.AddAuthorization(opt => opt.AddPolicy("IsActivityHost", policy => policy.Requirements.Add(new IsHostRequirement())));
             services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.Configuration["TokenKey"]));
@@ -106,7 +101,7 @@ namespace Reactivities.Api
                         {
                             var accessToken = context.Request.Query["access_token"];
                             var path = context.HttpContext.Request.Path;
-                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat")))
+                            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chat"))
                             {
                                 context.Token = accessToken;
                             }
@@ -136,15 +131,18 @@ namespace Reactivities.Api
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey
                 });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
                     {
-                        new OpenApiSecurityScheme {
-                            Reference = new OpenApiReference {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
                                 Type = ReferenceType.SecurityScheme,
                                     Id = "Bearer"
                             }
                         },
-                        new string[] { }
+                        Array.Empty<string>()
                     }
                 });
             });

@@ -11,7 +11,7 @@ using Reactivities.Domain;
 
 namespace Reactivities.Application.User
 {
-    public class ResendEmailVerification
+    public static class ResendEmailVerification
     {
         public record Query : IRequest
         {

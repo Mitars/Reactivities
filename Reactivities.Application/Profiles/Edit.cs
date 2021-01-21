@@ -1,15 +1,15 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Reactivities.Application.Interfaces;
 using Reactivities.Persistence;
 
 namespace Reactivities.Application.Profiles
 {
-    public class Edit
+    public static class Edit
     {
         public record Command : IRequest
         {
@@ -38,16 +38,18 @@ namespace Reactivities.Application.Profiles
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var user = this.context.Users.FirstOrDefault(u => u.UserName == this.userAccessor.GetCurrentUserName());
+                var user = await this.context.Users.FirstOrDefaultAsync(u => u.UserName == this.userAccessor.GetCurrentUserName(), cancellationToken);
 
                 user.DisplayName = request.DisplayName;
                 user.Bio = request.Bio ?? user.Bio;
 
-                var success = await this.context.SaveChangesAsync() > 0;
+                var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
+                if (!success)
+                {
+                    throw new Exception("Problem saving changes");
+                }
 
-                if (success) return Unit.Value;
-
-                throw new Exception("Problem saving changes");
+                return Unit.Value;
             }
         }
     }

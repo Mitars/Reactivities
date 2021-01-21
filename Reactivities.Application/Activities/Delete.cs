@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Reactivities.Application.Errors;
 using Reactivities.Persistence;
+using Reactivities.Persistence.Helpers;
 
 namespace Reactivities.Application.Activities
 {
-    public class Delete
+    public static class Delete
     {
         public record Command : IRequest
         {
@@ -26,19 +27,21 @@ namespace Reactivities.Application.Activities
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var activity = await this.context.Activities.FindAsync(request.Id);
-
+                var activity = await this.context.Activities.FindByIdAsync(request.Id, cancellationToken);
                 if (activity == null)
                 {
                     throw new RestException(HttpStatusCode.NotFound, new { activity = "Not found" });
                 }
 
                 this.context.Activities.Remove(activity);
-                var success = await this.context.SaveChangesAsync() > 0;
 
-                if (success) return Unit.Value;
+                var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
+                if (!success)
+                {
+                    throw new Exception("Problem saving changes");
+                }
 
-                throw new Exception("Problem saving changes");
+                return Unit.Value;
             }
         }
     }

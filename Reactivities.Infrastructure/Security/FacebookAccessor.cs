@@ -33,8 +33,9 @@ namespace Reactivities.Infrastructure.Security
         private async Task<T> GetAsync<T>(string accessToken, string endpoint, string args)
         {
             var response = await this.httpClient.GetAsync($"{endpoint}?access_token={accessToken}&{args}");
-            if (!response.IsSuccessStatusCode) {
-                return default(T);
+            if (!response.IsSuccessStatusCode)
+            {
+                return default;
             }
 
             var result = await response.Content.ReadAsStringAsync();
