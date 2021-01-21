@@ -32,7 +32,6 @@ namespace Reactivities.Application.Activities
             public async Task<ActivityDto> Handle(Query request, CancellationToken cancellationToken)
             {
                 var activity = await this.context.Activities.FindByIdAsync(request.Id, cancellationToken);
-
                 if (activity == null)
                 {
                     throw new RestException(HttpStatusCode.NotFound, new { activity = "Not found" });

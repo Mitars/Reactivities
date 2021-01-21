@@ -32,14 +32,12 @@ namespace Reactivities.Application.User
             public async Task<UserDto> Handle(Query request, CancellationToken cancellationToken)
             {
                 var userInfo = await this.facebookAccessor.FacebookLogin(request.AccessToken);
-
                 if (userInfo == null)
                 {
                     throw new RestException(HttpStatusCode.BadRequest, new { User = "Problem validating token" });
                 }
 
                 var user = await this.userManager.FindByEmailAsync(userInfo.Email);
-
                 if (user == null)
                 {
                     user = new AppUser
@@ -61,7 +59,6 @@ namespace Reactivities.Application.User
                     user.Photos.Add(photo);
 
                     var result = await this.userManager.CreateAsync(user);
-
                     if (!result.Succeeded)
                     {
                         throw new RestException(HttpStatusCode.BadRequest, new { User = "Problem creating user" });

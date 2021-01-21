@@ -32,7 +32,6 @@ namespace Reactivities.Application.Profiles
                 CancellationToken cancellationToken)
             {
                 var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == request.Username, cancellationToken);
-
                 if (user == null)
                 {
                     throw new RestException(HttpStatusCode.NotFound, new { User = "Not found" });

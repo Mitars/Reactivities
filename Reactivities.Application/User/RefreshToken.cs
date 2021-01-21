@@ -34,7 +34,6 @@ namespace Reactivities.Application.User
             {
                 var user = await this.userManager.FindByNameAsync(this.userAccessor.GetCurrentUserName());
                 var oldToken = user.RefreshTokens.SingleOrDefault(t => t.Token == request.RefreshToken);
-
                 if (oldToken?.IsActive == false)
                 {
                     throw new RestException(HttpStatusCode.Unauthorized);

@@ -41,7 +41,6 @@ namespace Reactivities.Application.Comments
                 }
 
                 var user = await this.context.Users.SingleOrDefaultAsync(x => x.UserName == request.Username, cancellationToken);
-
                 var comment = new Comment
                 {
                     Author = user,
@@ -53,10 +52,12 @@ namespace Reactivities.Application.Comments
                 activity.Comments.Add(comment);
 
                 var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
+                if (!success)
+                {
+                    throw new Exception("Problem saving changes");
+                }
 
-                if (success) return this.mapper.Map<CommentDto>(comment);
-
-                throw new Exception("Problem saving changes");
+                return this.mapper.Map<CommentDto>(comment);
             }
         }
     }

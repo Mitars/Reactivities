@@ -22,14 +22,12 @@ namespace Reactivities.Application.Profiles
         public async Task<Profile> ReadProfile(string username)
         {
             var user = await this.context.Users.SingleOrDefaultAsync(u => u.UserName == username);
-
             if (user == null)
             {
                 throw new RestException(HttpStatusCode.BadRequest, new { User = "Not found" });
             }
 
             var currentUser = await this.context.Users.SingleOrDefaultAsync(u => u.UserName == this.userAccessor.GetCurrentUserName());
-
             return new Profile
             {
                 DisplayName = user.DisplayName,

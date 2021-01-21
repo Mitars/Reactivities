@@ -36,8 +36,7 @@ namespace Reactivities.Application.Photos
                 {
                     throw new RestException(HttpStatusCode.NotFound, new { Photo = "Not found" });
                 }
-
-                if (photo.IsMain)
+                else if (photo.IsMain)
                 {
                     throw new RestException(HttpStatusCode.BadRequest, new { Photo = "You cannot delete your main photo" });
                 }
@@ -47,13 +46,12 @@ namespace Reactivities.Application.Photos
                 photo.IsMain = true;
 
                 var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
-
-                if (success)
+                if (!success)
                 {
-                    return Unit.Value;
+                    throw new Exception("Problem saving changes");
                 }
 
-                throw new Exception("Problem saving changes");
+                return Unit.Value;
             }
         }
     }

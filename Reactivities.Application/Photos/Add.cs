@@ -51,13 +51,12 @@ namespace Reactivities.Application.Photos
                 user.Photos.Add(photo);
 
                 var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
-
-                if (success)
+                if (!success)
                 {
-                    return photo;
+                    throw new Exception("Problem saving changes");
                 }
 
-                throw new Exception("Problem saving changes");
+                return photo;
             }
         }
     }

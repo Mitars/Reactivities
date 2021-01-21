@@ -71,7 +71,6 @@ namespace Reactivities.Application.User
                 };
 
                 var result = await this.userManager.CreateAsync(user, request.Password);
-
                 if (!result.Succeeded)
                 {
                     throw new Exception("Problem creating user");

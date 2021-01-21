@@ -45,10 +45,12 @@ namespace Reactivities.Application.Profiles
                 user.Bio = request.Bio ?? user.Bio;
 
                 var success = await this.context.SaveChangesAsync(cancellationToken) > 0;
+                if (!success)
+                {
+                    throw new Exception("Problem saving changes");
+                }
 
-                if (success) return Unit.Value;
-
-                throw new Exception("Problem saving changes");
+                return Unit.Value;
             }
         }
     }
