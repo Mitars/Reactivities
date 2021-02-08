@@ -16,19 +16,19 @@ namespace Reactivities.Api.Middleware
         {
             var contentSecurityPolicy = new StringBuilder()
                 .Append("block-all-mixed-content;")
-                .Append("style-src 'self' https://fonts.googleapis.com/ 'sha256-wkAU1AW/h8YFx0XlzvpTllAKnFEO2tw8aKErs5a26LY=';")
+                .Append("style-src 'self' https://fonts.googleapis.com/ 'sha256-2aahydUs+he2AO0g7YZuG67RGvfE9VXGbycVgIwMnBI=';")
                 .Append("font-src 'self' https://fonts.gstatic.com/ data:;")
-                .Append("form-action 'self';")
                 .Append("frame-ancestors 'self';")
-                .Append("img-src 'self' https://res.cloudinary.com data: blob:;")
-                .Append("script-src 'self' 'sha256-uSE6wZK79ac9dp/vledp4pXmIVW3QpEYGeScfy6MhnY=' 'sha256-rmPzuTgq1ESh5M2NbjxubD7q+sQYBgY660mouzJfn4Q=' 'sha256-Tui7QoFlnLXkJCSl1/JvEZdIXTmBttnWNxzJpXomQjg=' 'sha256-JRz1/3X5iBvaty8nuXJ+IMllcFH+any3UGyhGRZ3i9g=' 'sha256-jhSY8gx6xQqltOsXobsXomDNSPOpQSuFg9wvBUvY+DI=';")
+                .Append("img-src 'self' https://res.cloudinary.com/ https://www.facebook.com/ data: blob:;")
+                .Append("script-src 'self' 'sha256-rmPzuTgq1ESh5M2NbjxubD7q+sQYBgY660mouzJfn4Q=' https://connect.facebook.net/en_US/sdk.js;")
                 .ToString();
 
             context.Response.Headers["Content-Security-Policy"] = contentSecurityPolicy;
             context.Response.Headers["X-Frame-Options"] = "DENY";
             context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+            context.Response.Headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
             context.Response.Headers["Referrer-Policy"] = "same-origin";
-            context.Response.Headers["Permissions-Policy"] = "geolocation=(self '')";
+            context.Response.Headers["Permissions-Policy"] = "geolocation=()";
 
             await next(context);
         }
