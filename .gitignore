@@ -15,7 +15,6 @@ wwwroot
 publish
 
 # dependencies
-node_modules
 .pnp
 .pnp.js
 

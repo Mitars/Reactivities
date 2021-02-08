@@ -16,11 +16,11 @@ namespace Reactivities.Api.Middleware
         {
             var contentSecurityPolicy = new StringBuilder()
                 .Append("block-all-mixed-content;")
-                .Append("style-src 'self' https://fonts.googleapis.com/ 'sha256-2aahydUs+he2AO0g7YZuG67RGvfE9VXGbycVgIwMnBI=';")
+                .Append("style-src 'self' https://fonts.googleapis.com/;")
                 .Append("font-src 'self' https://fonts.gstatic.com/ data:;")
                 .Append("frame-ancestors 'self';")
                 .Append("img-src 'self' https://res.cloudinary.com/ https://www.facebook.com/ data: blob:;")
-                .Append("script-src 'self' 'sha256-rmPzuTgq1ESh5M2NbjxubD7q+sQYBgY660mouzJfn4Q=' https://connect.facebook.net/en_US/sdk.js;")
+                .Append("script-src 'self' 'sha256-nMtvOtStEGXMLbfBKeoqjn24I+h0xSnv4R0D3FnPP5Y=' https://connect.facebook.net/en_US/sdk.js;")
                 .ToString();
 
             context.Response.Headers["Content-Security-Policy"] = contentSecurityPolicy;
