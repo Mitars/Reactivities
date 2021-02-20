@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Reactivities.User
 {
-    public record GoogleUserInfo
+    public class GoogleUserInfo
     {
         [JsonProperty(PropertyName = "sub")]
         public string Id { get; init; }
@@ -17,6 +17,8 @@ namespace Reactivities.User
         [JsonProperty(PropertyName = "email_verified")]
         public bool EmailVerified { get; init; }
         public string Locale { get; init; }
+
+        public string Username => "g_" + this.Id;
         public string PictureUrl => this.Picture.Split("=").FirstOrDefault() + "=s500-c";
     }
 }

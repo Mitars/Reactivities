@@ -1,12 +1,14 @@
 namespace Reactivities.User
 {
-    public record FacebookUserInfo
+    public class FacebookUserInfo
     {
         public string Id { get; init; }
         public string Name { get; init; }
         public string Email { get; init; }
         public FacebookPictureData Picture { get; init; }
         public string PictureUrl => this.Picture.Data.Url;
+
+        public string Username => "fb_" + this.Id;
     }
 
     public record FacebookPictureData

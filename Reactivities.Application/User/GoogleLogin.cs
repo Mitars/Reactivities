@@ -45,13 +45,13 @@ namespace Reactivities.Application.User
                         DisplayName = userInfo.Name,
                         Id = userInfo.Id,
                         Email = userInfo.Email,
-                        UserName = "g_" + userInfo.Id,
+                        UserName = userInfo.Username,
                         EmailConfirmed = true
                     };
 
                     var photo = new Photo
                     {
-                        Id = "g_" + userInfo.Id,
+                        Id = userInfo.Username,
                         Url = userInfo.PictureUrl,
                         IsMain = true
                     };
