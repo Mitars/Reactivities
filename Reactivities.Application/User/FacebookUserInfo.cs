@@ -6,6 +6,7 @@ namespace Reactivities.User
         public string Name { get; init; }
         public string Email { get; init; }
         public FacebookPictureData Picture { get; init; }
+        public string PictureUrl => this.Picture.Data.Url;
     }
 
     public record FacebookPictureData

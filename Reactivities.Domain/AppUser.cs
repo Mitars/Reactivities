@@ -9,6 +9,7 @@ namespace Reactivities.Domain
         public AppUser()
         {
             Photos = new Collection<Photo>();
+            RefreshTokens = new Collection<RefreshToken>();
         }
 
         public string DisplayName { get; set; }

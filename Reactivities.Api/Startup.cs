@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -115,6 +114,7 @@ namespace Reactivities.Api
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.AddScoped<IProfileReader, ProfileReader>();
             services.AddScoped<IFacebookAccessor, FacebookAccessor>();
+            services.AddScoped<IGoogleAccessor, GoogleAccessor>();
             services.AddScoped<IEmailSender, EmailSender>();
             services.Configure<CloudinarySettings>(this.Configuration.GetSection("Cloudinary"));
             services.Configure<FacebookAppSettings>(this.Configuration.GetSection("Authentication:Facebook"));

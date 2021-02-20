@@ -17,7 +17,7 @@ const validate = combineValidators({
 
 const LoginForm = () => {
   const rootStore = useContext(RootStoreContext);
-  const { login, facebookLogin, loading } = rootStore.userStore;
+  const { login, facebookLogin, googleLogin, googleLoginSuccess, googleLoginError, loading } = rootStore.userStore;
 
   return (
     <FinalForm
@@ -64,7 +64,13 @@ const LoginForm = () => {
             fluid
           />
           <Divider horizontal>Or</Divider>
-          <SocialLogin loading={loading} facebookCallback={facebookLogin} />
+          <SocialLogin
+            loading={loading}
+            facebookCallback={facebookLogin}
+            googleCallback={googleLogin}
+            googleCallbackSuccess={googleLoginSuccess}
+            googleCallbackError={googleLoginError}
+          />
         </Form>
       )}
     />

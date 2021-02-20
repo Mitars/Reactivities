@@ -9,7 +9,7 @@ using Reactivities.Domain;
 
 namespace Reactivities.Application.User
 {
-    public static class ExternalLogin
+    public static class GoogleLogin
     {
         public record Query : IRequest<UserDto>
         {
@@ -19,19 +19,19 @@ namespace Reactivities.Application.User
         public class Handler : IRequestHandler<Query, UserDto>
         {
             private readonly UserManager<AppUser> userManager;
-            private readonly IFacebookAccessor facebookAccessor;
+            private readonly IGoogleAccessor googleAccessor;
             private readonly IJwtGenerator jwtGenerator;
 
-            public Handler(UserManager<AppUser> userManager, IFacebookAccessor facebookAccessor, IJwtGenerator jwtGenerator)
+            public Handler(UserManager<AppUser> userManager, IGoogleAccessor googleAccessor, IJwtGenerator jwtGenerator)
             {
                 this.jwtGenerator = jwtGenerator;
-                this.facebookAccessor = facebookAccessor;
+                this.googleAccessor = googleAccessor;
                 this.userManager = userManager;
             }
 
             public async Task<UserDto> Handle(Query request, CancellationToken cancellationToken)
             {
-                var userInfo = await this.facebookAccessor.FacebookLogin(request.AccessToken);
+                var userInfo = await this.googleAccessor.Login(request.AccessToken);
                 if (userInfo == null)
                 {
                     throw new RestException(HttpStatusCode.BadRequest, new { User = "Problem validating token" });
@@ -45,14 +45,14 @@ namespace Reactivities.Application.User
                         DisplayName = userInfo.Name,
                         Id = userInfo.Id,
                         Email = userInfo.Email,
-                        UserName = "fb_" + userInfo.Id,
+                        UserName = "g_" + userInfo.Id,
                         EmailConfirmed = true
                     };
 
                     var photo = new Photo
                     {
-                        Id = "fb_" + userInfo.Id,
-                        Url = userInfo.Picture.Data.Url,
+                        Id = "g_" + userInfo.Id,
+                        Url = userInfo.PictureUrl,
                         IsMain = true
                     };
 
