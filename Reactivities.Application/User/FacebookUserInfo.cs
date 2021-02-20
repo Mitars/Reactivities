@@ -8,7 +8,8 @@ namespace Reactivities.User
         public FacebookPictureData Picture { get; init; }
         public string PictureUrl => this.Picture.Data.Url;
 
-        public string Username => "fb_" + this.Id;
+        private const string Prefix = "fb_";
+        public string Username => Prefix + this.Id;
     }
 
     public record FacebookPictureData

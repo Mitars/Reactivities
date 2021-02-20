@@ -18,7 +18,8 @@ namespace Reactivities.User
         public bool EmailVerified { get; init; }
         public string Locale { get; init; }
 
-        public string Username => "g_" + this.Id;
+        private const string Prefix = "g_";
+        public string Username => Prefix + this.Id;
         public string PictureUrl => this.Picture.Split("=").FirstOrDefault() + "=s500-c";
     }
 }
