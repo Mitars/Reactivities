@@ -9,6 +9,7 @@ import { User, UserFormValues } from '../models/user';
 import agent from '../api/agent';
 import { RootStore } from './rootStore';
 import { history } from '../..';
+import { toast } from 'react-toastify';
 
 export default class UserStore {
   private refreshTokenTimeout: any;
@@ -92,6 +93,34 @@ export default class UserStore {
       )
       .catch((e) => console.error(e))
       .finally(() => runInAction(() => (this.loading = false)));
+  };
+  
+  googleLogin = () => {
+    this.loading = true;
+  };
+
+  googleLoginSuccess = (response: any) => {
+    agent.User.googleLogin(response.accessToken)
+      .then((user) =>
+        runInAction(() => {
+          this.user = user;
+          this.rootStore.commonStore.setToken(user.token);
+          this.startRefreshTokenTimer(user);
+          this.rootStore.modalStore.closeModal();
+          history.push('/activities');
+        })
+      )
+      .catch((e) => {
+        toast.error('Failed to login - please check the console for more info');
+        console.error(e);
+      })
+      .finally(() => runInAction(() => (this.loading = false)));
+  };
+  
+  googleLoginError = (response: any) => {
+    this.loading = false;
+    toast.error('Failed to login');
+    console.error(response);
   };
 
   refreshToken = () => {

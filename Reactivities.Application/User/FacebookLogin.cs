@@ -9,7 +9,7 @@ using Reactivities.Domain;
 
 namespace Reactivities.Application.User
 {
-    public static class ExternalLogin
+    public static class FacebookLogin
     {
         public record Query : IRequest<UserDto>
         {
@@ -31,7 +31,7 @@ namespace Reactivities.Application.User
 
             public async Task<UserDto> Handle(Query request, CancellationToken cancellationToken)
             {
-                var userInfo = await this.facebookAccessor.FacebookLogin(request.AccessToken);
+                var userInfo = await this.facebookAccessor.Login(request.AccessToken);
                 if (userInfo == null)
                 {
                     throw new RestException(HttpStatusCode.BadRequest, new { User = "Problem validating token" });
@@ -45,14 +45,14 @@ namespace Reactivities.Application.User
                         DisplayName = userInfo.Name,
                         Id = userInfo.Id,
                         Email = userInfo.Email,
-                        UserName = "fb_" + userInfo.Id,
+                        UserName = userInfo.Username,
                         EmailConfirmed = true
                     };
 
                     var photo = new Photo
                     {
-                        Id = "fb_" + userInfo.Id,
-                        Url = userInfo.Picture.Data.Url,
+                        Id = userInfo.Username,
+                        Url = userInfo.PictureUrl,
                         IsMain = true
                     };
 

@@ -94,6 +94,8 @@ const UserAgent = {
     requests.post('/user/register', user),
   facebookLogin: (accessToken: string) =>
     requests.post('/user/facebook', { accessToken }),
+  googleLogin: (accessToken: string) =>
+    requests.post('/user/google', { accessToken }),
   refreshToken: (): Promise<User> => requests.post('/user/refreshToken', {}),
   verifyEmail: (token: string, email: string): Promise<User> =>
     requests.post('/user/verifyEmail', { token, email }),

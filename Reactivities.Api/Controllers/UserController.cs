@@ -21,7 +21,12 @@ namespace Reactivities.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("facebook")]
-        public async Task<ActionResult<UserDto>> FacebookLogin(ExternalLogin.Query command) =>
+        public async Task<ActionResult<UserDto>> FacebookLogin(FacebookLogin.Query command) =>
+            this.AppendUserRefreshTokenCookie(await this.Mediator.Send(command));
+
+        [AllowAnonymous]
+        [HttpPost("google")]
+        public async Task<ActionResult<UserDto>> GoogleLogin(GoogleLogin.Query command) =>
             this.AppendUserRefreshTokenCookie(await this.Mediator.Send(command));
 
         [AllowAnonymous]

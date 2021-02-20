@@ -3,8 +3,8 @@ using Reactivities.User;
 
 namespace Reactivities.Application.Interfaces
 {
-    public interface IFacebookAccessor
+    public interface IGoogleAccessor
     {
-        Task<FacebookUserInfo> Login(string accessToken);
+        Task<GoogleUserInfo> Login(string accessToken);
     }
 }

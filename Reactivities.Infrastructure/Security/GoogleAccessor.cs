@@ -8,31 +8,31 @@ using Reactivities.User;
 
 namespace Reactivities.Infrastructure.Security
 {
-    public class FacebookAccessor : IFacebookAccessor
+    public class GoogleAccessor : IGoogleAccessor
     {
         private readonly HttpClient httpClient;
         private readonly IOptions<FacebookAppSettings> config;
 
-        public FacebookAccessor(IOptions<FacebookAppSettings> config)
+        public GoogleAccessor(IOptions<FacebookAppSettings> config)
         {
             this.config = config;
-            this.httpClient = new HttpClient { BaseAddress = new System.Uri("https://graph.facebook.com/") };
+            this.httpClient = new HttpClient { BaseAddress = new System.Uri("https://www.googleapis.com/") };
             this.httpClient.DefaultRequestHeaders
                 .Accept
                 .Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<FacebookUserInfo> Login(string accessToken) =>
+        public async Task<GoogleUserInfo> Login(string accessToken) =>
             await this.IsValid(accessToken)
-                ? await GetAsync<FacebookUserInfo>(accessToken, "me", "fields=name,email,picture.width(100).height(100)")
+                ? await GetAsync<GoogleUserInfo>(accessToken, "oauth2/v3/userinfo")
                 : null;
 
         private async Task<bool> IsValid(string accessToken) =>
-            (await this.httpClient.GetAsync($"debug_token?input_token={accessToken}&access_token={this.config.Value.AppId}|{this.config.Value.AppSecret}")).IsSuccessStatusCode;
+            (await this.httpClient.GetAsync($"oauth2/v3/userinfo?access_token={accessToken}")).IsSuccessStatusCode;
 
-        private async Task<T> GetAsync<T>(string accessToken, string endpoint, string args)
+        private async Task<T> GetAsync<T>(string accessToken, string endpoint)
         {
-            var response = await this.httpClient.GetAsync($"{endpoint}?access_token={accessToken}&{args}");
+            var response = await this.httpClient.GetAsync($"{endpoint}?access_token={accessToken}");
             if (!response.IsSuccessStatusCode)
             {
                 return default;
