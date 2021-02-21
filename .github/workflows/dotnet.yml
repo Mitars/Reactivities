@@ -29,22 +29,21 @@ jobs:
     - name: .NET Build
       run: dotnet build --no-restore
 
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
+    - name: Upload Artifact
+    - uses: actions/upload-artifact@v2
+      with:
+        name: my-artifact
+        path: / # or path/to/artifact
+
     - name: .NET Test
       run: dotnet test --no-build --verbosity normal
-      
-  deploy:
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/master'
-    steps:
+
     - name: .NET Publish
+      if: github.ref == 'refs/heads/master'
       run: dotnet publish -c Release -o publish --self-contained false Reactivities.sln
 
     - name: Copy Files to Host
+      if: github.ref == 'refs/heads/master'
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
@@ -54,6 +53,7 @@ jobs:
         target: "/var/reactivities"
 
     - name: Prepare Folders and Start Service
+      if: github.ref == 'refs/heads/master'
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DIGITALOCEAN_HOST }}
