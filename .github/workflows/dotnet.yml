@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: [ master ]
+    branches: [ push ]
 
 jobs:
   build:
@@ -30,10 +30,19 @@ jobs:
     
     - name: .NET Build
       run: dotnet build --no-restore
-    
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
     - name: .NET Test
       run: dotnet test --no-build --verbosity normal
-    
+      
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/master'
+    steps:
     - name: .NET Publish
       run: dotnet publish -c Release -o publish --self-contained false Reactivities.sln
 
